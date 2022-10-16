@@ -1,8 +1,10 @@
+import {ErrorBoundary} from 'react-error-boundary'
 import {Routes, Route} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import {useState} from 'react';
 import {ethers} from 'ethers';
 import Web3 from "web3";
+
 
 import './App.css';
 import Login from "./components/login/login";
@@ -234,10 +236,10 @@ export default function App() {
     };
 
     return (
+        // <BrowserRouter>
         <ErrorBoundary
             FallbackComponent={fallbackComponent}
         >
-        // <BrowserRouter>
             <div className="App">
                 <Routes>
                     <Route path = "/vault-project" element = {<Login isHaveMetamask = {haveMetamask} connectTo = {connectWallet} />}></Route>
@@ -246,8 +248,8 @@ export default function App() {
                     <Route path = "/vault-project/history" element = {<HistoryDisplay/>}></Route>
                 </Routes>
             </div>
-        // </BrowserRouter>
         </ErrorBoundary>
+        // </BrowserRouter>
     );
 }
 
