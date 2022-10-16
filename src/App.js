@@ -71,7 +71,7 @@ export default function App() {
             setBalance(bal);
             setIsConnected(true);
 
-            navigate('/InterfaceDemo/profile');
+            navigate('/vault-project/profile');
         }
         catch (error){
             setIsConnected(false);
@@ -229,10 +229,10 @@ export default function App() {
         // <BrowserRouter>
             <div className="App">
                 <Routes>
-                    <Route path = "/InterfaceDemo" element = {<Login isHaveMetamask = {haveMetamask} connectTo = {connectWallet} />}></Route>
-                    <Route path = "/InterfaceDemo/profile" element = {<ProfileDisplay/>}></Route>
-                    <Route path = "/InterfaceDemo/storage" element = {<StorageDisplay/>}></Route>
-                    <Route path = "/InterfaceDemo/history" element = {<HistoryDisplay/>}></Route>
+                    <Route path = "/vault-project" element = {<Login isHaveMetamask = {haveMetamask} connectTo = {connectWallet} />}></Route>
+                    <Route path = "/vault-project/profile" element = {<ProfileDisplay/>}></Route>
+                    <Route path = "/vault-project/storage" element = {<StorageDisplay/>}></Route>
+                    <Route path = "/vault-project/history" element = {<HistoryDisplay/>}></Route>
                 </Routes>
             </div>
         // </BrowserRouter>
