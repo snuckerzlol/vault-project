@@ -224,8 +224,19 @@ export default function App() {
         )
     }
 
+    const fallbackComponent = ({ error, componentStack, resetErrorBoundary }) => {
+        return (
+          <div>
+            <h1>An error occurred: {error.message}</h1>
+            <button onClick={resetErrorBoundary}>Try again</button>
+          </div>
+        );
+    };
 
     return (
+        <ErrorBoundary
+            FallbackComponent={fallbackComponent}
+        >
         // <BrowserRouter>
             <div className="App">
                 <Routes>
@@ -236,6 +247,7 @@ export default function App() {
                 </Routes>
             </div>
         // </BrowserRouter>
+        </ErrorBoundary>
     );
 }
 
