@@ -1,0 +1,123 @@
+{
+	"compiler": {
+		"version": "0.4.26+commit.4563c3fc"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isInstantiation",
+				"outputs": [
+					{
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "",
+						"type": "address"
+					},
+					{
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "instantiations",
+				"outputs": [
+					{
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "creator",
+						"type": "address"
+					}
+				],
+				"name": "getInstantiationCount",
+				"outputs": [
+					{
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"name": "instantiation",
+						"type": "address"
+					}
+				],
+				"name": "ContractInstantiation",
+				"type": "event"
+			}
+		],
+		"devdoc": {
+			"methods": {
+				"getInstantiationCount(address)": {
+					"details": "Returns number of instantiations by creator.",
+					"params": {
+						"creator": "Contract creator."
+					},
+					"return": "Returns number of instantiations by creator."
+				}
+			}
+		},
+		"userdoc": {
+			"methods": {}
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Factory.sol": "Factory"
+		},
+		"evmVersion": "byzantium",
+		"libraries": {},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Factory.sol": {
+			"keccak256": "0x7804d53db4c8a8fcfadf18a82c3dc92f11507f4fbab7062d850d8bd28cbb88ef",
+			"urls": [
+				"bzzr://b97062bd28ae1122f35d8a439b90ffe6ba4675e60fb9d7f3456f1ac7c94543e0"
+			]
+		}
+	},
+	"version": 1
+}

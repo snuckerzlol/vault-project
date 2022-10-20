@@ -1,0 +1,168 @@
+{
+	"compiler": {
+		"version": "0.4.26+commit.4563c3fc"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isInstantiation",
+				"outputs": [
+					{
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "",
+						"type": "address"
+					},
+					{
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "instantiations",
+				"outputs": [
+					{
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "creator",
+						"type": "address"
+					}
+				],
+				"name": "getInstantiationCount",
+				"outputs": [
+					{
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"name": "_owners",
+						"type": "address[]"
+					},
+					{
+						"name": "_required",
+						"type": "uint256"
+					}
+				],
+				"name": "create",
+				"outputs": [
+					{
+						"name": "wallet",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"name": "instantiation",
+						"type": "address"
+					}
+				],
+				"name": "ContractInstantiation",
+				"type": "event"
+			}
+		],
+		"devdoc": {
+			"author": "Stefan George - <stefan.george@consensys.net>",
+			"methods": {
+				"create(address[],uint256)": {
+					"details": "Allows verified creation of multisignature wallet.",
+					"params": {
+						"_owners": "List of initial owners.",
+						"_required": "Number of required confirmations."
+					},
+					"return": "Returns wallet address."
+				},
+				"getInstantiationCount(address)": {
+					"details": "Returns number of instantiations by creator.",
+					"params": {
+						"creator": "Contract creator."
+					},
+					"return": "Returns number of instantiations by creator."
+				}
+			},
+			"title": "Multisignature wallet factory - Allows creation of multisig wallet."
+		},
+		"userdoc": {
+			"methods": {}
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"MultiSigWalletFactory.sol": "MultiSigWalletFactory"
+		},
+		"evmVersion": "byzantium",
+		"libraries": {},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Factory.sol": {
+			"keccak256": "0x7804d53db4c8a8fcfadf18a82c3dc92f11507f4fbab7062d850d8bd28cbb88ef",
+			"urls": [
+				"bzzr://b97062bd28ae1122f35d8a439b90ffe6ba4675e60fb9d7f3456f1ac7c94543e0"
+			]
+		},
+		"MultiSigWallet.sol": {
+			"keccak256": "0x3017ea5629fd27acd03684f6d7fef6538ca20ea7093fbcda7eab485dc75db2ab",
+			"urls": [
+				"bzzr://8ee34d39ea057c114230adff27cb134d8f0dc422790b8f7483a3504da6f6835c"
+			]
+		},
+		"MultiSigWalletFactory.sol": {
+			"keccak256": "0x2a934bc8253735709b4d6e8f6f21e78e63698a75ab0b320cea72517a6ec57400",
+			"urls": [
+				"bzzr://586f3380e8cbdf905c5375973c37dd4238ad48d71a28f565fe19dc8ea29d9a7c"
+			]
+		}
+	},
+	"version": 1
+}
