@@ -1,25 +1,44 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.15;    // Maybe can use a newer version?
 
-contract Vault {
-    // An instance of a multi-signature wallet
+contract MultiSigWallet {
 
     struct Transaction {
-        string name;
-        mapping(address => bool) hasVoted;
-        mapping(address => bool) vote;
-        uint256 expiryTime;
-        address payable to;
+        bool exists;
+        mapping (address => bool) voteType;
+        mapping (address => bool) hasVoted;
+        uint expiryTime;
+        address destination;
+        address transaction;
+        bool isConfirmed;
+        bool isProcessed;
     }
 
-    // State variables
-    mapping(address => bool) public isOwner; // Stores owners of wallet
-    uint256 public minVotes; // Stores the minimm votes to approve a tx
-    mapping(uint256 => Transaction) public pendingTransactions;
-    mapping(uint256 => Transaction) public processedTransactions;
+    mapping public (address => bool) isOwner;
+    uint public minVotes;
+    uint public expiryTime;
+    mapping (uint => Transaction) public transactions;
 
-    // Errors
+    constructor (address[] _owners, uint _minVotes, uint _duration) public {
+        require(_owners.length > 0, "The wallet must have at least one owner.");
+        require(minVotes <= _owners.length, "The minimum number of votes cannot exceed the number of owners.");
 
-    // Events
+        minVotes = _minVotes;
+        for (uint i = 0; i < _owners.length; ++i) {
+            isOwner[_owners[i]] = true;
+        }
 
-    // Functions
+        expiryTime = block.timestamp + _duration;
+    }
+
+    function voteTransaction(uint id, bool approve) {
+        require(isOwner[msg.sender], "You are not an owner of this wallet.");
+        require(transactions[id].exists, "The transaction does not exist.");
+        require(!transactions[id].isProcessed, "This transaction has already been processed.");
+        require(block.timestamp <= expiryTime, "This transaction has expired.");
+        // Add the below require if it is deemed unsuitable for people to change their vote on a transaction
+        // require(!transactions[id].hasVoted[msg.sender], "You have already voted for this transaction.");
+
+        transactions[id].hasVoted[msg.sender] = true;
+        transactions[id].voteType[msg.sender] = approve;
+    }
 }
