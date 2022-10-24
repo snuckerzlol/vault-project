@@ -1,11 +1,15 @@
-pragma solidity ^0.4.15;    // Maybe can use a newer version?
+pragma solidity ^0.8.17;    // Maybe can use a newer version?
 
 contract MultiSigWallet {
 
     struct Transaction {
         bool exists;
         mapping (address => bool) voteType;
-        mapping (address => bool) hasVoted;
+
+        // Check if voteType[address] is null wd suffice, I think
+        // mapping (address => bool) hasVoted;
+
+        uint amount;
         uint expiryTime;
         address destination;
         address transaction;
@@ -13,12 +17,13 @@ contract MultiSigWallet {
         bool isProcessed;
     }
 
-    mapping public (address => bool) isOwner;
+    mapping (address => bool) isOwner;
     uint public minVotes;
-    uint public expiryTime;
+    uint public expiryDuration;
+    uint public transactionCount;
     mapping (uint => Transaction) public transactions;
 
-    constructor (address[] _owners, uint _minVotes, uint _duration) public {
+    constructor (address[] memory _owners, uint _minVotes, uint _duration) {
         require(_owners.length > 0, "The wallet must have at least one owner.");
         require(minVotes <= _owners.length, "The minimum number of votes cannot exceed the number of owners.");
 
@@ -27,18 +32,29 @@ contract MultiSigWallet {
             isOwner[_owners[i]] = true;
         }
 
-        expiryTime = block.timestamp + _duration;
+        expiryDuration = block.timestamp + _duration;
     }
 
-    function voteTransaction(uint id, bool approve) {
+    function voteTransaction(uint _id, bool _approve) public {
         require(isOwner[msg.sender], "You are not an owner of this wallet.");
-        require(transactions[id].exists, "The transaction does not exist.");
-        require(!transactions[id].isProcessed, "This transaction has already been processed.");
-        require(block.timestamp <= expiryTime, "This transaction has expired.");
+        require(transactions[_id].exists, "The transaction does not exist.");
+        require(!transactions[_id].isProcessed, "This transaction has already been processed.");
+        require(block.timestamp <= expiryDuration, "This transaction has expired.");
         // Add the below require if it is deemed unsuitable for people to change their vote on a transaction
-        // require(!transactions[id].hasVoted[msg.sender], "You have already voted for this transaction.");
+        // require(!transactions[_id].hasVoted[msg.sender], "You have already voted for this transaction.");
 
-        transactions[id].hasVoted[msg.sender] = true;
-        transactions[id].voteType[msg.sender] = approve;
+        transactions[_id].voteType[msg.sender] = _approve;
+    }
+
+    function addTransaction(address _destination, uint _amount) public {
+        require(isOwner[msg.sender], "You are not an owner of this wallet.");
+        Transaction storage t = transactions[transactionCount];
+        t.exists = true;
+        t.amount = _amount;
+        t.expiryTime = block.timestamp + (expiryDuration * 1 seconds);
+        t.destination = _destination;
+        t.isConfirmed = false;
+        t.isProcessed = false;
+        transactionCount += 1;
     }
 }
