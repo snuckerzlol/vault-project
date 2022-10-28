@@ -1,18 +1,38 @@
 import {ErrorBoundary} from 'react-error-boundary'
-import {Routes, Route} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
 import {useState} from 'react';
 import {ethers} from 'ethers';
 import Web3 from "web3";
 
+import Home from './pages/home/home';
+import CreateSafe from './pages/createsafe/createsafe';
+import AccessSafe from './pages/accesssafe/accesssafe';
+import SafeInfo from './pages/safeinfo/safeinfo';
 
 import './App.css';
-import Login from "./components/login/login";
-import Profile from "./components/profile/profile";
-import Storage from "./components/storage/storage";
-import History from "./components/history/history";
+
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./contracts/config";
 
+export default function App() {
+  
+    return (
+      <div className="App">
+        <BrowserRouter>
+        
+          <Routes>
+            <Route path= '/' element={<Home/>} />
+            <Route path= '/createsafe' element={<CreateSafe/>} />
+            <Route path= '/accesssafe' element={<AccessSafe/>} />
+            <Route path= '/safeinfo' element={<SafeInfo/>} />
+          </Routes>
+        
+        </BrowserRouter>
+      </div>
+    );
+  }
+
+/*
 export default function App() {
     const [haveMetamask, setHaveMetamask] = useState(true);     // check if the browser has MetaMask installed. 
     const [address, setAddress] = useState(null);               // address of connected MetaMask account. 
@@ -47,38 +67,38 @@ export default function App() {
     // }, []);
 
 ////// connect to MetaMask. 
-    const connectWallet = async () => {         // function that connect to METAMASK account, activated when clicking on 'connect'. 
-        try {
-            if (!ethereum){
-                setHaveMetamask(false);
-            }
-            const accounts = await ethereum.request({
-                method: 'eth_requestAccounts',
-            });
-            const chainId = await ethereum.request({
-                method: 'eth_chainId',
-            });
+    // const connectWallet = async () => {         // function that connect to METAMASK account, activated when clicking on 'connect'. 
+    //     try {
+    //         if (!ethereum){
+    //             setHaveMetamask(false);
+    //         }
+    //         const accounts = await ethereum.request({
+    //             method: 'eth_requestAccounts',
+    //         });
+    //         const chainId = await ethereum.request({
+    //             method: 'eth_chainId',
+    //         });
 
-            let balanceVal = await provider.getBalance(accounts[0]);
-            let bal = ethers.utils.formatEther(balanceVal);
+    //         let balanceVal = await provider.getBalance(accounts[0]);
+    //         let bal = ethers.utils.formatEther(balanceVal);
 
-            console.log(chainId);
-            if (chainId === '0x3'){
-                setNetwork('Ropsten Test Network');
-            }
-            else {
-                setNetwork('Other Test Network');
-            }
-            setAddress(accounts[0]);
-            setBalance(bal);
-            setIsConnected(true);
+    //         console.log(chainId);
+    //         if (chainId === '0x3'){
+    //             setNetwork('Ropsten Test Network');
+    //         }
+    //         else {
+    //             setNetwork('Other Test Network');
+    //         }
+    //         setAddress(accounts[0]);
+    //         setBalance(bal);
+    //         setIsConnected(true);
 
-            navigate('/vault-project/profile');
-        }
-        catch (error){
-            setIsConnected(false);
-        }
-    }
+    //         navigate('/vault-project/profile');
+    //     }
+    //     catch (error){
+    //         setIsConnected(false);
+    //     }
+    // }
 
 
 ////// Contract Deployment. 
@@ -192,64 +212,58 @@ export default function App() {
 
 
 ////// display functions. 
-    const ProfileDisplay = () => {
-        return (
-            <Profile 
-                isConnected = {isConnected}
-                address = {address} 
-                networkType = {network} 
-                balance = {balance}
-            />
-        )
-    }
+    // const ProfileDisplay = () => {
+    //     return (
+    //         <Profile 
+    //             isConnected = {isConnected}
+    //             address = {address} 
+    //             networkType = {network} 
+    //             balance = {balance}
+    //         />
+    //     )
+    // }
 
-    const StorageDisplay = () => {
-        return (
-            <Storage 
-                isConnected = {isConnected}
-                storeValHandle = {storedValUpdate} 
-                showValHandle = {showValUpdate} 
-                showVal = {showVal} 
-                storedPending = {storedPending}
-                storedDone = {storedDone}
-            />
-        )
-    }
+    // const StorageDisplay = () => {
+    //     return (
+    //         <Storage 
+    //             isConnected = {isConnected}
+    //             storeValHandle = {storedValUpdate} 
+    //             showValHandle = {showValUpdate} 
+    //             showVal = {showVal} 
+    //             storedPending = {storedPending}
+    //             storedDone = {storedDone}
+    //         />
+    //     )
+    // }
 
-    const HistoryDisplay = () => {
-        return (
-            <History 
-                isConnected = {isConnected}
-                recordList = {historyRecord}
-                recordLen = {recordLen}
-            />
-        )
-    }
-
-    const fallbackComponent = ({ error, componentStack, resetErrorBoundary }) => {
-        return (
-          <div>
-            <h1>An error occurred: {error.message}</h1>
-            <button onClick={resetErrorBoundary}>Try again</button>
-          </div>
-        );
-    };
+    // const HistoryDisplay = () => {
+    //     return (
+    //         <History 
+    //             isConnected = {isConnected}
+    //             recordList = {historyRecord}
+    //             recordLen = {recordLen}
+    //         />
+    //     )
+    // }
 
     return (
         // <BrowserRouter>
-        <ErrorBoundary
-            FallbackComponent={fallbackComponent}
-        >
+        //<ErrorBoundary FallbackComponent={fallbackComponent}>
             <div className="App">
-                <Routes>
-                    <Route path = "/vault-project" element = {<Login isHaveMetamask = {haveMetamask} connectTo = {connectWallet} />}></Route>
-                    <Route path = "/vault-project/profile" element = {<ProfileDisplay/>}></Route>
-                    <Route path = "/vault-project/storage" element = {<StorageDisplay/>}></Route>
-                    <Route path = "/vault-project/history" element = {<HistoryDisplay/>}></Route>
-                </Routes>
+                
+                <BrowserRouter>
+      
+                    <Routes>
+                        <Route path= '/' element={<Home/>} />
+                        <Route path= '/createsafe' element={<CreateSafe/>} />
+                        <Route path= '/accesssafe' element={<AccessSafe/>} />
+                        <Route path= '/safeinfo' element={<SafeInfo/>} />
+                    </Routes>
+
+                </BrowserRouter>
             </div>
-        </ErrorBoundary>
+        //</ErrorBoundary>
         // </BrowserRouter>
     );
-}
+}*/
 
