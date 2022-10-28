@@ -57,4 +57,9 @@ contract MultiSigWallet {
         t.isProcessed = false;
         transactionCount += 1;
     }
+    function executeTransaction(address payable destination, uint amount) public payable{
+        require(amount!=0);
+        (bool sucessfulTransaction, bytes memory returnBytes) = destination.call{value: amount}("");
+        require(sucessfulTransaction = true, "Transaction was unsuccessful");
+    }
 }
