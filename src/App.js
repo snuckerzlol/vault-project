@@ -21,10 +21,10 @@ export default function App() {
         <BrowserRouter>
         
           <Routes>
-            <Route path= '/' element={<Home/>} />
-            <Route path= '/createsafe' element={<CreateSafe/>} />
-            <Route path= '/accesssafe' element={<AccessSafe/>} />
-            <Route path= '/safeinfo' element={<SafeInfo/>} />
+            <Route path= '/vault-project/' element={<Home/>} />
+            <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
+            <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
+            <Route path= '/vault-project/safeinfo' element={<SafeInfo/>} />
           </Routes>
         
         </BrowserRouter>
