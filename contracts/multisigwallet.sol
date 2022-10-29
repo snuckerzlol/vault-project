@@ -36,6 +36,14 @@ contract MultiSigWallet {
         // expiryDuration = block.timestamp + _duration;
     }
 
+    function setMinVotes(uint _minVotes) public {
+        minVotes = _minVotes;
+    }
+
+    function setSafeName(string memory _safeName) public {
+        safeName = _safeName;
+    }
+
     function voteTransaction(uint _id, bool _approve) public {
         require(isOwner[msg.sender], "You are not an owner of this wallet.");
         require(transactions[_id].exists, "The transaction does not exist.");
