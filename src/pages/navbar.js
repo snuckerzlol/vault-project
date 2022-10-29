@@ -7,7 +7,7 @@ export default function Navbar() {
 
         <nav className="nav"> 
 
-            <Link to='/' className="homelink"><h1>Home</h1></Link>
+            <Link to='/vault-project/' className="homelink"><h1>Home</h1></Link>
             
         </nav>
 

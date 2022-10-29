@@ -11,7 +11,7 @@ function SafeUnit(props) {
 
             
             <Button variant="outline-primary" size="lg">
-                <Link to= '/safeinfo' style={{ textDecoration: 'none' }}>
+                <Link to= '/vault-project/safeinfo' style={{ textDecoration: 'none' }}>
                     <div>
                         {props.name}
                     </div>

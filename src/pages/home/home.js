@@ -31,7 +31,7 @@ export default function Home() {
                 <h1 className='fw-normal'> Home</h1>
                 <ButtonGroup>
 
-                    <Link to='/createsafe' style={{ textDecoration: 'none' }}>
+                    <Link to='/vault-project/createsafe' style={{ textDecoration: 'none' }}>
                         <SafeButton name = 'Create Safe'/>
                     </Link>
 
@@ -39,7 +39,7 @@ export default function Home() {
 
                 <ButtonGroup>
 
-                    <Link to='/accesssafe' style={{ textDecoration: 'none' }}>
+                    <Link to='/vault-project/accesssafe' style={{ textDecoration: 'none' }}>
                         <SafeButton name = 'Access Safe'/>
                     </Link>
                 </ButtonGroup>
