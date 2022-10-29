@@ -94,10 +94,7 @@ contract MultiSigWallet {
     }
 
     function executeTransaction(uint256 _id) public payable {
-        require(
-            isOwner[msg.sender] = true,
-            "Only owners can execute transactions."
-        );
+        require(isOwner[msg.sender], "Only owners can execute transactions.");
         // uint256 numApproved = 0;
         // for (uint256 i = 0; i < _owners.length; ++i) {
         //     if (transactions[_id].voteType[_owners[i]] = true) {
@@ -120,7 +117,7 @@ contract MultiSigWallet {
             _id
         ].destination.call{value: transactions[_id].amount}("");
 
-        require(sucessfulTransaction = true, "Transaction was unsuccessful");
+        require(sucessfulTransaction, "Transaction was unsuccessful");
 
         transactions[_id].isProcessed = true;
     }
