@@ -93,22 +93,19 @@ contract MultiSigWallet {
         transactionCount += 1;
     }
 
-    function executeTransaction(uint256 _id, address[] memory _owners)
-        public
-        payable
-    {
+    function executeTransaction(uint256 _id) public payable {
         require(
             isOwner[msg.sender] = true,
             "Only owners can execute transactions."
         );
-        uint256 numApproved = 0;
-        for (uint256 i = 0; i < _owners.length; ++i) {
-            if (transactions[_id].voteType[_owners[i]] = true) {
-                numApproved += 1;
-            }
-        }
+        // uint256 numApproved = 0;
+        // for (uint256 i = 0; i < _owners.length; ++i) {
+        //     if (transactions[_id].voteType[_owners[i]] = true) {
+        //         numApproved += 1;
+        //     }
+        // }
         require(
-            numApproved >= minVotes,
+            transactions[_id].forVotes >= minVotes,
             "Number of votes has not been reached."
         );
         require(
