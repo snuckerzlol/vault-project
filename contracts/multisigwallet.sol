@@ -49,6 +49,10 @@ contract MultiSigWallet {
         safeName = _safeName;
     }
 
+    function addOwner(address _newOwner) public {
+        isOwner[_newOwner] = true;
+    }
+
     function voteTransaction(uint256 _id, bool _approve) public {
         require(isOwner[msg.sender], "You are not an owner of this wallet.");
         require(transactions[_id].exists, "The transaction does not exist.");

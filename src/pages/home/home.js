@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function Home() {
+export default function Home(props) {
 
     const SafeButton = (props) => { // Button component
         
@@ -26,7 +26,7 @@ export default function Home() {
 
         <div>
 
-            <Navbar/>
+            <Navbar connectTo={props.connectTo}/>
             <div className='home mt-3'>
                 <h1 className='fw-normal'> Home</h1>
                 <ButtonGroup>

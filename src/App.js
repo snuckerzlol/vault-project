@@ -1,7 +1,7 @@
 import {ErrorBoundary} from 'react-error-boundary'
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {ethers} from 'ethers';
 import Web3 from "web3";
 
@@ -15,13 +15,68 @@ import './App.css';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./contracts/config";
 
 export default function App() {
-  
+    const [haveMetamask, setHaveMetamask] = useState(true);     // check if the browser has MetaMask installed. 
+    const [address, setAddress] = useState(null);               // address of connected MetaMask account. 
+    const [network, setNetwork] = useState(null);               // network the account is using. 
+    const [balance, setBalance] = useState(0);                  // balance of connected MetaMask account. 
+    const [isConnected, setIsConnected] = useState(false);      // check if is connected to MetaMask account. 
+
+    const {ethereum} = window;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+
+    const connectWallet = async () => {         // function that connect to METAMASK account, activated when clicking on 'connect'. 
+        try {
+            if (!ethereum) {
+                setHaveMetamask(false);
+            }
+            const accounts = await ethereum.request({
+                method: 'eth_requestAccounts',
+            });
+            const chainId = await ethereum.request({
+                method: 'eth_chainId',
+            });
+
+            let balanceVal = await provider.getBalance(accounts[0]);
+            let bal = ethers.utils.formatEther(balanceVal);
+
+            console.log(chainId);
+            if (chainId === '0x3') {
+                setNetwork('Ropsten Test Network');
+            }
+            else {
+                setNetwork('Other Test Network');
+            }
+            setAddress(accounts[0]);
+            setBalance(bal);
+            setIsConnected(true);
+            console.log(accounts[0]);
+            console.log(bal);
+        }
+        catch (error){
+            console.log(error);
+            setIsConnected(false);
+        }
+    }
+
+    useEffect(() => {
+        const { ethereum } = window;
+        const checkMetamaskAvailability = async () => {
+            if (!ethereum) {
+                setHaveMetamask(false);
+            }
+            setHaveMetamask(true);
+        };
+        checkMetamaskAvailability();
+    }, []);
+
     return (
       <div className="App">
         <BrowserRouter>
         
           <Routes>
-            <Route path= '/vault-project/' element={<Home/>} />
+            <Route path= '/vault-project/' element={<Home connectTo={connectWallet}/>} />
             <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
             <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
             <Route path= '/vault-project/safeinfo' element={<SafeInfo/>} />
