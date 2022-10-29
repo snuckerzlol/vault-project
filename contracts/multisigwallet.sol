@@ -60,13 +60,21 @@ contract MultiSigWallet {
         transactionCount += 1;
     }
 
-    function getVoteFromTransaction(uint _transactionId, address _address) public returns (bool) {
-        return transactions[_transactionId].voteType[_address];
-    }
-
-    function executeTransaction(address payable destination, uint amount) public payable{
-        require(amount!=0);
-        (bool sucessfulTransaction, bytes memory returnBytes) = destination.call{value: amount}("");
+    function executeTransaction(uint _id, address[] memory _owners) public payable{
+        require(isOwner[msg.sender]=true, "Only owners can execute transactions.");
+        uint numApproved = 0;
+        for (uint i = 0; i < _owners.length; ++i) {
+            if (transactions[_id].voteType[_owners[i]]=true) {
+                numApproved += 1; 
+            }
+        }
+        require(numApproved > minVotes, "Number of votes has not been reached.");
+        require(transactions[_id].amount!=0, "Transaction does not send anything.");
+        require(!transactions[_id].isProcessed, "The transactions has already been processed.");
+        (bool sucessfulTransaction, bytes memory returnBytes) = transactions[_id].destination.call{value: transactions[_id].amount}("");
+        
         require(sucessfulTransaction = true, "Transaction was unsuccessful");
+        
+        transactions[_id].isProcessed = true;
     }
 }
