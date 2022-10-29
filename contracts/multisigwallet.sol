@@ -19,44 +19,51 @@ contract MultiSigWallet {
 
     mapping (address => bool) isOwner;
     uint public minVotes;
-    uint public expiryDuration;
     uint public transactionCount;
+    string public safeName;
     mapping (uint => Transaction) public transactions;
 
-    constructor (address[] memory _owners, uint _minVotes, uint _duration) {
+    constructor (string memory _safeName, uint _minVotes, address[] memory _owners) {
         require(_owners.length > 0, "The wallet must have at least one owner.");
-        require(minVotes <= _owners.length, "The minimum number of votes cannot exceed the number of owners.");
+        require(_minVotes <= _owners.length, "The minimum number of votes cannot exceed the number of owners.");
 
+        safeName = _safeName;
         minVotes = _minVotes;
         for (uint i = 0; i < _owners.length; ++i) {
             isOwner[_owners[i]] = true;
         }
 
-        expiryDuration = block.timestamp + _duration;
+        // expiryDuration = block.timestamp + _duration;
     }
 
     function voteTransaction(uint _id, bool _approve) public {
         require(isOwner[msg.sender], "You are not an owner of this wallet.");
         require(transactions[_id].exists, "The transaction does not exist.");
         require(!transactions[_id].isProcessed, "This transaction has already been processed.");
-        require(block.timestamp <= expiryDuration, "This transaction has expired.");
+        require(block.timestamp <= transactions[_id].expiryTime, "This transaction has expired.");
+        // require(block.timestamp <= expiryDuration, "This transaction has expired.");
         // Add the below require if it is deemed unsuitable for people to change their vote on a transaction
         // require(!transactions[_id].hasVoted[msg.sender], "You have already voted for this transaction.");
 
         transactions[_id].voteType[msg.sender] = _approve;
     }
 
-    function addTransaction(address _destination, uint _amount) public {
+    function addTransaction(address _destination, uint _amount, uint _duration) public {
         require(isOwner[msg.sender], "You are not an owner of this wallet.");
         Transaction storage t = transactions[transactionCount];
         t.exists = true;
         t.amount = _amount;
-        t.expiryTime = block.timestamp + (expiryDuration * 1 seconds);
+        t.expiryTime = block.timestamp + (_duration * 1 seconds);
         t.destination = _destination;
         t.isConfirmed = false;
         t.isProcessed = false;
         transactionCount += 1;
     }
+
+    function getVoteFromTransaction(uint _transactionId, address _address) public returns (bool) {
+        return transactions[_transactionId].voteType[_address];
+    }
+
     function executeTransaction(address payable destination, uint amount) public payable{
         require(amount!=0);
         (bool sucessfulTransaction, bytes memory returnBytes) = destination.call{value: amount}("");
