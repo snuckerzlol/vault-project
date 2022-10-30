@@ -6,7 +6,10 @@ import { useEffect, useState } from 'react';
 
 function TxRow(props) {
     async function voteTx(approve) {
-        await props.contract.methods.voteTransaction(approve).send();
+        console.log(`Address is ${props.contract.defaultAccount}`);
+        await props.contract.methods
+            .voteTransaction(props.TxNumber, approve)
+            .send();
     }
 
     return (
@@ -102,10 +105,10 @@ function AddNewTx() {
 }
 
 export default function SafeInfo(props) {
-    const[safeName, setSafeName] = useState(null);
-    const[balance, setBalance] = useState(0);
-    const[transactionCount, setTransactionCount] = useState(0);
-    const[ownerAddress, setOwnerAddress] = useState(null);
+    const [safeName, setSafeName] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [transactionCount, setTransactionCount] = useState(0);
+    const [ownerAddress, setOwnerAddress] = useState(null);
 
     async function getSafeName() {
         const safeName = await props.walletContract.methods.safeName().call();
@@ -132,7 +135,7 @@ export default function SafeInfo(props) {
     }
 
     async function addOwner(address) {
-        if(checkIfOwner(address)) {
+        if (checkIfOwner(address)) {
             console.log('Address is in the owner list');
         } else {
             await props.walletContract.methods.addOwner(address);
@@ -144,11 +147,13 @@ export default function SafeInfo(props) {
             return false;
         }
         try {
-            const isOwner = await props.walletContract.methods.isOwner(address).call();
-            console.log("Owner " + address + "? " + isOwner);
+            const isOwner = await props.walletContract.methods
+                .isOwner(address)
+                .call();
+            console.log('Owner ' + address + '? ' + isOwner);
             return isOwner;
         } catch (e) {
-            console.log("Owner " + address + "? Unauthorized user");
+            console.log('Owner ' + address + '? Unauthorized user');
             return false;
         }
     }
@@ -158,26 +163,42 @@ export default function SafeInfo(props) {
         getBalance();
         getTransactionCount();
         getTransactions();
-        checkIfOwner(props.metamaskAddress).then(isOwner => {
+        checkIfOwner(props.metamaskAddress).then((isOwner) => {
             if (isOwner) {
                 return (
                     <div className='safe-info-content mt-3'>
-                        <span class="safe-name">{safeName}</span>
-                        <Balance balance={balance}/>
-                        <PendingTxTable/>
-                        <AddNewTx/>
+                        <span class='safe-name'>{safeName}</span>
+                        <Balance balance={balance} />
+                        <PendingTxTable />
+                        <AddNewTx />
                         <div className='add-new-tx mt-5'>
                             <h1 className='fs-3 fw-normal'>Add new owner</h1>
                             <div>
-                                <FloatingLabel label="Address" className="mb-3">
+                                <FloatingLabel label='Address' className='mb-3'>
                                     <Form.Control
-                                        placeholder="Address"
+                                        placeholder='Address'
                                         value={ownerAddress}
-                                        onChange={e => setOwnerAddress(e.target.value)}
-                                        />
+                                        onChange={(e) =>
+                                            setOwnerAddress(e.target.value)
+                                        }
+                                    />
                                 </FloatingLabel>
-                                <Button onClick={() => {addOwner(ownerAddress)}}>Add Owner</Button><br/><br/>
-                                <Button onClick={() => {checkIfOwner(ownerAddress)}}>Check Owner</Button>
+                                <Button
+                                    onClick={() => {
+                                        addOwner(ownerAddress);
+                                    }}
+                                >
+                                    Add Owner
+                                </Button>
+                                <br />
+                                <br />
+                                <Button
+                                    onClick={() => {
+                                        checkIfOwner(ownerAddress);
+                                    }}
+                                >
+                                    Check Owner
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -185,11 +206,12 @@ export default function SafeInfo(props) {
             } else {
                 return (
                     <div className='safe-info-content mt-3'>
-                        <span class="safe-name">{safeName}</span><br/>
+                        <span class='safe-name'>{safeName}</span>
+                        <br />
                         <span>Unauthorized user</span>
                     </div>
                 );
             }
-        })
+        });
     }, []);
 }
