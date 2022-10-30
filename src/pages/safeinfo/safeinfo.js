@@ -78,21 +78,40 @@ function PendingTxTable(props) {
     );
 }
 
-function AddNewTx() {
+function AddNewTx(props) {
+    const[address, setAddress] = useState(null);
+    const[amount, setAmount] = useState(null);
+    const[duration, setDuration] = useState(null);
+
+    async function addTransaction() {
+    }
+
     return (
         <div className='add-new-tx mt-5'>
             <h1 className='fs-3 fw-normal'>Add new transaction</h1>
             <div>
                 <FloatingLabel label='Address' className='mb-3'>
-                    <Form.Control placeholder='Address' />
+                    <Form.Control
+                        placeholder='Address'
+                        value={address}
+                        onChange={e => setAddress(e.target.value)}
+                    />
                 </FloatingLabel>
 
                 <FloatingLabel label='Amount' className='mb-3'>
-                    <Form.Control placeholder='Amount' />
+                    <Form.Control
+                        placeholder='Amount'
+                        value={amount}
+                        onChange={e => setAmount(e.target.value)}
+                    />
                 </FloatingLabel>
 
                 <FloatingLabel label='Duration' className='mb-3'>
-                    <Form.Control placeholder='Duration' />
+                    <Form.Control
+                        placeholder='Duration'
+                        value={duration}
+                        onChange={e => setDuration(e.target.value)}
+                    />
                 </FloatingLabel>
 
                 <Button>Add Transaction</Button>
@@ -106,9 +125,11 @@ export default function SafeInfo(props) {
     const[balance, setBalance] = useState(0);
     const[transactionCount, setTransactionCount] = useState(0);
     const[ownerAddress, setOwnerAddress] = useState(null);
+    const[isOwner, setIsOwner] = useState(false);
+
 
     async function getSafeName() {
-        const safeName = await props.walletContract.methods.safeName().call();
+        const safeName = await props.contract.methods.safeName().call();
         setSafeName(safeName);
     }
 
@@ -118,38 +139,29 @@ export default function SafeInfo(props) {
     }
 
     async function getTransactionCount() {
-        const transactionCount = await props.walletContract.methods
+        const transactionCount = await props.contract.methods
             .transactionCount()
             .call();
         setTransactionCount(transactionCount);
     }
 
     async function getTransactions() {
-        const transactions = await props.walletContract.methods
+        const transactions = await props.contract.methods
             .transactions(0)
             .call();
         console.log(transactions);
     }
 
-    async function addOwner(address) {
-        if(checkIfOwner(address)) {
-            console.log('Address is in the owner list');
-        } else {
-            await props.walletContract.methods.addOwner(address);
-        }
-    }
+    // async function addOwner(address) {
+    //     await props.contract.methods.addOwner(address);
+    // }
 
     async function checkIfOwner(address) {
-        if (address === null) {
-            return false;
-        }
         try {
-            const isOwner = await props.walletContract.methods.isOwner(address).call();
-            console.log("Owner " + address + "? " + isOwner);
-            return isOwner;
+            const isOwner = await props.contract.methods.isOwner(address).call();
+            setIsOwner(isOwner);
         } catch (e) {
             console.log("Owner " + address + "? Unauthorized user");
-            return false;
         }
     }
 
@@ -158,38 +170,37 @@ export default function SafeInfo(props) {
         getBalance();
         getTransactionCount();
         getTransactions();
-        checkIfOwner(props.metamaskAddress).then(isOwner => {
-            if (isOwner) {
-                return (
-                    <div className='safe-info-content mt-3'>
-                        <span class="safe-name">{safeName}</span>
-                        <Balance balance={balance}/>
-                        <PendingTxTable/>
-                        <AddNewTx/>
-                        <div className='add-new-tx mt-5'>
-                            <h1 className='fs-3 fw-normal'>Add new owner</h1>
-                            <div>
-                                <FloatingLabel label="Address" className="mb-3">
-                                    <Form.Control
-                                        placeholder="Address"
-                                        value={ownerAddress}
-                                        onChange={e => setOwnerAddress(e.target.value)}
-                                        />
-                                </FloatingLabel>
-                                <Button onClick={() => {addOwner(ownerAddress)}}>Add Owner</Button><br/><br/>
-                                <Button onClick={() => {checkIfOwner(ownerAddress)}}>Check Owner</Button>
-                            </div>
-                        </div>
+        checkIfOwner(props.metamaskAddress);
+    }, [props.metamaskAddress]);
+    
+    return (
+        <div>
+        {isOwner ? 
+            <div className='safe-info-content mt-3'>
+                <span class="safe-name">{safeName}</span>
+                <Balance balance={balance}/>
+                <PendingTxTable contract={props.contract}/>
+                <AddNewTx contract={props.contract}/>
+                <div className='add-new-tx mt-5'>
+                    <h1 className='fs-3 fw-normal'>Add new owner</h1>
+                    <div>
+                        <FloatingLabel label="Address" className="mb-3">
+                            <Form.Control
+                                placeholder="Address"
+                                value={ownerAddress}
+                                onChange={e => setOwnerAddress(e.target.value)}
+                                />
+                        </FloatingLabel>
                     </div>
-                );
-            } else {
-                return (
-                    <div className='safe-info-content mt-3'>
-                        <span class="safe-name">{safeName}</span><br/>
-                        <span>Unauthorized user</span>
-                    </div>
-                );
-            }
-        })
-    }, []);
+                </div>
+            </div>
+        
+        :
+        <div className='safe-info-content mt-3'>
+            <span class="safe-name">{safeName}</span><br/>
+            <span>Unauthorized user</span>
+        </div>
+        }
+        </div>
+    );
 }
