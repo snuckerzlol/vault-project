@@ -154,10 +154,6 @@ export default function SafeInfo(props) {
         console.log(transactions);
     }
 
-    // async function addOwner(address) {
-    //     await props.contract.methods.addOwner(address);
-    // }
-
     async function checkIfOwner(address) {
         try {
             const isOwner = await props.walletContract.methods.isOwner(address).call();
@@ -184,27 +180,6 @@ export default function SafeInfo(props) {
                     <Balance balance={balance} />
                     <PendingTxTable />
                     <AddNewTx />
-                    <div className='add-new-tx mt-5'>
-                        <h1 className='fs-3 fw-normal'>Add new owner</h1>
-                        <div>
-                            <FloatingLabel label='Address' className='mb-3'>
-                                <Form.Control
-                                    placeholder='Address'
-                                    value={ownerAddress}
-                                    onChange={(e) =>
-                                        setOwnerAddress(e.target.value)
-                                    }
-                                />
-                            </FloatingLabel>
-                            <Button
-                                onClick={() => {
-                                    checkIfOwner(ownerAddress);
-                                }}
-                            >
-                                Check Owner
-                            </Button>
-                        </div>
-                    </div>
                 </div>
             :
                 <div className='safe-info-content mt-3'>
