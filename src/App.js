@@ -1,19 +1,19 @@
-import {ErrorBoundary} from 'react-error-boundary'
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import {useNavigate} from "react-router-dom";
-import {useState, useEffect} from 'react';
-import {ethers} from 'ethers';
-import Web3 from "web3";
+import { ErrorBoundary } from 'react-error-boundary';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import Web3 from 'web3';
 
 import Home from './pages/home/home';
 import CreateSafe from './pages/createsafe/createsafe';
 import AccessSafe from './pages/accesssafe/accesssafe';
 import SafeInfo from './pages/safeinfo/safeinfo';
-import Navbar from './pages/navbar'
+import Navbar from './pages/navbar';
 
 import './App.css';
 
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./contracts/config";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from './contracts/config';
 
 export default function App() {
     const [haveMetamask, setHaveMetamask] = useState(true);     // check if the browser has MetaMask installed. 
@@ -22,12 +22,13 @@ export default function App() {
     const [balance, setBalance] = useState(0);                  // balance of connected MetaMask account. 
     const [isConnected, setIsConnected] = useState(false);      // check if is connected to MetaMask account. 
 
-    const {ethereum} = window;
+    const { ethereum } = window;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
     const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 
-    const connectWallet = async () => {         // function that connect to METAMASK account, activated when clicking on 'connect'. 
+    const connectWallet = async () => {
+        // function that connect to METAMASK account, activated when clicking on 'connect'.
         try {
             if (!ethereum) {
                 setHaveMetamask(false);
@@ -45,21 +46,20 @@ export default function App() {
             console.log(chainId);
             if (chainId === '0x3') {
                 setNetwork('Ropsten Test Network');
-            }
-            else {
+            } else {
                 setNetwork('Other Test Network');
             }
             setMetamaskAddress(accounts[0]);
+            contract.defaultAccount = accounts[0];
             setBalance(bal);
             setIsConnected(true);
             console.log(accounts[0]);
             console.log(bal);
-        }
-        catch (error){
+        } catch (error) {
             console.log(error);
             setIsConnected(false);
         }
-    }
+    };
 
     useEffect(() => {
         const { ethereum } = window;
@@ -73,28 +73,36 @@ export default function App() {
     }, []);
 
     return (
-    <div className="App">
-
-        <BrowserRouter>
-            <div>
-                <Navbar connectTo={connectWallet}/>
-            </div>
-          <Routes>
-            <Route path= '/vault-project/' element={<Home/>} />
-            <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
-            <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
-            <Route path= '/vault-project/safeinfo' element={<SafeInfo 
-            web3={web3}
-            walletContract={contract} 
-            contractAddress={CONTRACT_ADDRESS}
-            metamaskAddress={metamaskAddress}
-            />} />
-          </Routes>
-        
-        </BrowserRouter>
-    </div>
+        <div className='App'>
+            <BrowserRouter>
+                <div>
+                    <Navbar connectTo={connectWallet} />
+                </div>
+                <Routes>
+                    <Route path='/vault-project/' element={<Home />} />
+                    <Route
+                        path='/vault-project/createsafe'
+                        element={<CreateSafe />}
+                    />
+                    <Route
+                        path='/vault-project/accesssafe'
+                        element={<AccessSafe />}
+                    />
+                    <Route
+                        path='/vault-project/safeinfo'
+                        element={
+                            <SafeInfo
+                                web3={web3}
+                                walletContract={contract}
+                                contractAddress={CONTRACT_ADDRESS}
+                            />
+                        }
+                    />
+                </Routes>
+            </BrowserRouter>
+        </div>
     );
-  }
+}
 
 /*
 export default function App() {
@@ -330,4 +338,3 @@ export default function App() {
         // </BrowserRouter>
     );
 }*/
-
