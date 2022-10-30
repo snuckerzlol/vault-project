@@ -16,7 +16,9 @@ function TxRow(props) {
             <td>{props.TxNumber}</td>
             <td>{props.Recepient}</td>
             <td>{props.TxAmount}</td>
-            <td>{props.Votes}/5</td>
+            <td>
+                {props.forVotes}/{props.minVotes}
+            </td>
             <td>
                 <Button className='approve-deny' onClick={() => voteTx(true)}>
                     Approve
@@ -29,9 +31,9 @@ function TxRow(props) {
     );
 }
 // Table content here.
-const TxTableContent = [
-    { TxNumber: '1', Recepient: '23243', TxAmount: '0.31', Votes: '2' },
-];
+// const TxTableContent = [
+//     { TxNumber: '1', Recepient: '23243', TxAmount: '0.31', Votes: '2' },
+// ];
 
 // function AddNewRow(props){
 
@@ -47,6 +49,7 @@ function Balance(props) {
 }
 
 function PendingTxTable(props) {
+    const TxTableContent = props.transactions;
     return (
         <div>
             <h1 className='fs-3 fw-normal'>Pending Transactions</h1>
@@ -65,12 +68,13 @@ function PendingTxTable(props) {
                     {/* <TxRow TxNumber= '1' Recepient='23243' TxAmount='0.31' Votes='2' />
                     <TxRow TxNumber= '2' Recepient='35278' TxAmount='0.79' Votes='0'/>
                     <TxRow TxNumber= '3' Recepient='99001' TxAmount='0.0004' Votes='1'/> */}
-                    {TxTableContent.map((row) => (
+                    {TxTableContent.map((row, index) => (
                         <TxRow
-                            TxNumber={row.TxNumber}
-                            Recepient={row.Recepient}
-                            TxAmount={row.TxAmount}
-                            Votes={row.Votes}
+                            TxNumber={index + 1}
+                            Recepient={row.destination}
+                            TxAmount={row.amount}
+                            forVotes={row.forVotes}
+                            minVotes={props.minVotes}
                             contract={props.contract}
                         />
                     ))}
@@ -85,7 +89,11 @@ function AddNewTx(props) {
     const [amount, setAmount] = useState(null);
     const [duration, setDuration] = useState(null);
 
-    async function addTransaction() {}
+    async function addTransaction() {
+        props.contract.methods
+            .addTransaction(address, amount, duration)
+            .send({ from: props.metamaskAddress });
+    }
 
     return (
         <div className='add-new-tx mt-5'>
@@ -115,7 +123,13 @@ function AddNewTx(props) {
                     />
                 </FloatingLabel>
 
-                <Button>Add Transaction</Button>
+                <Button
+                    onClick={() => {
+                        addTransaction();
+                    }}
+                >
+                    Add Transaction
+                </Button>
             </div>
         </div>
     );
@@ -124,9 +138,11 @@ function AddNewTx(props) {
 export default function SafeInfo(props) {
     const [safeName, setSafeName] = useState(null);
     const [balance, setBalance] = useState(0);
+    const [minVotes, setMinVotes] = useState(null);
     const [transactionCount, setTransactionCount] = useState(0);
     const [ownerAddress, setOwnerAddress] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
+    const [transactions, setTransactions] = useState([]);
 
     async function getSafeName() {
         const safeName = await props.contract.methods.safeName().call();
@@ -138,6 +154,11 @@ export default function SafeInfo(props) {
         setBalance(balance);
     }
 
+    async function getMinVotes() {
+        const minVotes = await props.contract.methods.minVotes().call();
+        setMinVotes(minVotes);
+    }
+
     async function getTransactionCount() {
         const transactionCount = await props.contract.methods
             .transactionCount()
@@ -146,15 +167,20 @@ export default function SafeInfo(props) {
     }
 
     async function getTransactions() {
-        const transactions = await props.contract.methods
-            .transactions(0)
-            .call();
-        console.log(transactions);
+        for (var i = 0; i < transactionCount; i++) {
+            const addTransaction = await props.contract.methods
+                .transactions(i)
+                .call();
+            setTransactions((transactions) => [
+                ...transactions,
+                addTransaction,
+            ]);
+        }
     }
 
     async function checkIfOwner(address) {
         try {
-            const isOwner = await props.walletContract.methods
+            const isOwner = await props.contract.methods
                 .isOwner(address)
                 .call();
             console.log('Owner ' + address + '? ' + isOwner);
@@ -168,6 +194,7 @@ export default function SafeInfo(props) {
     useEffect(() => {
         getSafeName();
         getBalance();
+        getMinVotes();
         getTransactionCount();
         getTransactions();
         checkIfOwner(props.metamaskAddress);
@@ -179,8 +206,15 @@ export default function SafeInfo(props) {
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <Balance balance={balance} />
-                    <PendingTxTable contract={props.contract} />
-                    <AddNewTx contract={props.contract} />
+                    <PendingTxTable
+                        contract={props.contract}
+                        transactions={transactions}
+                        minVotes={minVotes}
+                    />
+                    <AddNewTx
+                        contract={props.contract}
+                        metamaskAddress={props.metamaskAddress}
+                    />
                 </div>
             ) : (
                 <div className='safe-info-content mt-3'>
