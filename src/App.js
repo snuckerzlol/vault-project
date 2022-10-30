@@ -17,7 +17,7 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./contracts/config";
 
 export default function App() {
     const [haveMetamask, setHaveMetamask] = useState(true);     // check if the browser has MetaMask installed. 
-    const [address, setAddress] = useState(null);               // address of connected MetaMask account. 
+    const [metamaskAddress, setMetamaskAddress] = useState(null);               // address of connected MetaMask account. 
     const [network, setNetwork] = useState(null);               // network the account is using. 
     const [balance, setBalance] = useState(0);                  // balance of connected MetaMask account. 
     const [isConnected, setIsConnected] = useState(false);      // check if is connected to MetaMask account. 
@@ -49,7 +49,7 @@ export default function App() {
             else {
                 setNetwork('Other Test Network');
             }
-            setAddress(accounts[0]);
+            setMetamaskAddress(accounts[0]);
             setBalance(bal);
             setIsConnected(true);
             console.log(accounts[0]);
@@ -83,7 +83,12 @@ export default function App() {
             <Route path= '/vault-project/' element={<Home/>} />
             <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
             <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
-            <Route path= '/vault-project/safeinfo' element={<SafeInfo web3={web3} walletContract={contract} contractAddress={CONTRACT_ADDRESS}/>} />
+            <Route path= '/vault-project/safeinfo' element={<SafeInfo 
+            web3={web3}
+            walletContract={contract} 
+            contractAddress={CONTRACT_ADDRESS}
+            metamaskAddress={metamaskAddress}
+            />} />
           </Routes>
         
         </BrowserRouter>

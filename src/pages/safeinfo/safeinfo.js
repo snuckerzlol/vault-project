@@ -102,9 +102,10 @@ function AddNewTx() {
 }
 
 export default function SafeInfo(props) {
-    const[safeName, setSafeName] = useState('');
+    const[safeName, setSafeName] = useState(null);
     const[balance, setBalance] = useState(0);
     const[transactionCount, setTransactionCount] = useState(0);
+    const[ownerAddress, setOwnerAddress] = useState(null);
 
     async function getSafeName() {
         const safeName = await props.walletContract.methods.safeName().call();
@@ -127,21 +128,65 @@ export default function SafeInfo(props) {
         console.log(transactions);
     }
 
+    async function addOwner(address) {
+        if(checkIfOwner(address)) {
+            console.log('Address is in the owner list');
+        } else {
+            await props.walletContract.methods.addOwner(address);
+        }
+    }
+
+    async function checkIfOwner(address) {
+        if (address === null) {
+            return false;
+        }
+        try {
+            const isOwner = await props.walletContract.methods.isOwner(address).call();
+            console.log("Owner " + address + "? " + isOwner);
+            return isOwner;
+        } catch (e) {
+            console.log("Owner " + address + "? Unauthorized user");
+            return false;
+        }
+    }
+
     useEffect(() => {
         getSafeName();
         getBalance();
         getTransactionCount();
         getTransactions();
+        checkIfOwner(props.metamaskAddress).then(isOwner => {
+            if (isOwner) {
+                return (
+                    <div className='safe-info-content mt-3'>
+                        <span class="safe-name">{safeName}</span>
+                        <Balance balance={balance}/>
+                        <PendingTxTable/>
+                        <AddNewTx/>
+                        <div className='add-new-tx mt-5'>
+                            <h1 className='fs-3 fw-normal'>Add new owner</h1>
+                            <div>
+                                <FloatingLabel label="Address" className="mb-3">
+                                    <Form.Control
+                                        placeholder="Address"
+                                        value={ownerAddress}
+                                        onChange={e => setOwnerAddress(e.target.value)}
+                                        />
+                                </FloatingLabel>
+                                <Button onClick={() => {addOwner(ownerAddress)}}>Add Owner</Button><br/><br/>
+                                <Button onClick={() => {checkIfOwner(ownerAddress)}}>Check Owner</Button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            } else {
+                return (
+                    <div className='safe-info-content mt-3'>
+                        <span class="safe-name">{safeName}</span><br/>
+                        <span>Unauthorized user</span>
+                    </div>
+                );
+            }
+        })
     }, []);
-
-    return (
-        <div> 
-            <div className='safe-info-content mt-3'>
-                <span class="safe-name">{safeName}</span>
-                <Balance balance={balance}/>
-                <PendingTxTable/>
-                <AddNewTx/>
-            </div>
-        </div>
-    )
 }
