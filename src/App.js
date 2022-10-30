@@ -51,6 +51,7 @@ export default function App() {
             }
             setMetamaskAddress(accounts[0]);
             contract.defaultAccount = accounts[0];
+            console.log(contract.defaultAccount);
             setBalance(bal);
             setIsConnected(true);
             console.log(accounts[0]);
@@ -93,8 +94,9 @@ export default function App() {
                         element={
                             <SafeInfo
                                 web3={web3}
-                                walletContract={contract}
+                                contract={contract}
                                 contractAddress={CONTRACT_ADDRESS}
+                                metamaskAddress={metamaskAddress}
                             />
                         }
                     />
