@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0xc2E03090C111905907c986a273EB1f6678E8d7Cc";
+export const CONTRACT_ADDRESS = "0x3B620BCFA256B8233964b51bAa8804a84BED0401";
 export const CONTRACT_ABI = [
 	{
 		"inputs": [
@@ -115,6 +115,25 @@ export const CONTRACT_ABI = [
 		"type": "constructor"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "isOwner",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "minVotes",
 		"outputs": [
@@ -212,34 +231,4 @@ export const CONTRACT_ABI = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
-
-// export const CONTRACT_ADDRESS = "0xfbdbaec336d4aa2c4fd6f36826a0a4128309e1e8";
-// export const CONTRACT_ABI = [
-//     {
-//         "inputs": [
-//             {
-//                 "internalType": "uint256",
-//                 "name": "x",
-//                 "type": "uint256"
-//             }
-//         ],
-//         "name": "set",
-//         "outputs": [],
-//         "stateMutability": "nonpayable",
-//         "type": "function"
-//     },
-//     {
-//         "inputs": [],
-//         "name": "get",
-//         "outputs": [
-//             {
-//                 "internalType": "uint256",
-//                 "name": "",
-//                 "type": "uint256"
-//             }
-//         ],
-//         "stateMutability": "view",
-//         "type": "function"
-//     }
-// ];
+]
