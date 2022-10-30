@@ -178,8 +178,8 @@ export default function SafeInfo(props) {
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <Balance balance={balance} />
-                    <PendingTxTable />
-                    <AddNewTx />
+                    <PendingTxTable contract={props.contract}/>
+                    <AddNewTx contract={props.contract}/>
                 </div>
             :
                 <div className='safe-info-content mt-3'>
