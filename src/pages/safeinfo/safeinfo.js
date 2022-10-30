@@ -156,7 +156,7 @@ export default function SafeInfo(props) {
 
     async function checkIfOwner(address) {
         try {
-            const isOwner = await props.walletContract.methods.isOwner(address).call();
+            const isOwner = await props.contract.methods.isOwner(address).call();
             console.log('Owner ' + address + '? ' + isOwner);
             setIsOwner(isOwner);
         } catch (e) {
