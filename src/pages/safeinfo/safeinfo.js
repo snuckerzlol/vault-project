@@ -103,8 +103,6 @@ export default function SafeInfo() {
 
         <div> 
 
-            <Navbar/>
-
             <div className='safe-info-content mt-3'>
                 <Balance bal='5000'/>
 

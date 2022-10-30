@@ -23,18 +23,16 @@ function SafeUnit(props) {
 }
 
 
-export default function AccessSafe() {
+export default function AccessSafe(props) {
 
     return (
 
         <div>
-            <Navbar/>
             <div className='access-safe mt-3'>
 
                 <h1 className='fw-normal fs-3 mb-3'> Access Safe</h1>
                 <div className='safeunits'>
-                    <SafeUnit name='Test Safe 1'/>
-                    <SafeUnit name='Test Safe 2'/>
+                    <SafeUnit name={'Test Safe 1'}/>
                 </div>
 
                 <div className='add-safe-forms'>

@@ -26,7 +26,6 @@ export default function Home(props) {
 
         <div>
 
-            <Navbar connectTo={props.connectTo}/>
             <div className='home mt-3'>
                 <h1 className='fw-normal'> Home</h1>
                 <ButtonGroup>

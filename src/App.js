@@ -9,6 +9,7 @@ import Home from './pages/home/home';
 import CreateSafe from './pages/createsafe/createsafe';
 import AccessSafe from './pages/accesssafe/accesssafe';
 import SafeInfo from './pages/safeinfo/safeinfo';
+import Navbar from './pages/navbar'
 
 import './App.css';
 
@@ -72,18 +73,21 @@ export default function App() {
     }, []);
 
     return (
-      <div className="App">
+    <div className="App">
+
         <BrowserRouter>
-        
+            <div>
+                <Navbar connectTo={connectWallet}/>
+            </div>
           <Routes>
-            <Route path= '/vault-project/' element={<Home connectTo={connectWallet}/>} />
+            <Route path= '/vault-project/' element={<Home/>} />
             <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
             <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
             <Route path= '/vault-project/safeinfo' element={<SafeInfo/>} />
           </Routes>
         
         </BrowserRouter>
-      </div>
+    </div>
     );
   }
 

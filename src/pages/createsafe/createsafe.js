@@ -11,8 +11,6 @@ export default function CreateSafe() {
 
         <div>
 
-            <Navbar/>
-
             <div className='content'>
 
                 <h5 className='title fs-3 fw-normal'>Connect your personal safes</h5>
