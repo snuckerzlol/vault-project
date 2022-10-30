@@ -48,7 +48,7 @@ function Balance(props) {
 }
 
 function PendingTxTable(props) {
-    const TxTableContent = [props.transactions];
+    const TxTableContent = props.transactions;
     return (
         <div>
             <h1 className='fs-3 fw-normal'>Pending Transactions</h1>
@@ -133,7 +133,7 @@ export default function SafeInfo(props) {
     const[transactionCount, setTransactionCount] = useState(0);
     const[ownerAddress, setOwnerAddress] = useState(null);
     const[isOwner, setIsOwner] = useState(false);
-    const[transactions, setTransactions] = useState(null);
+    const[transactions, setTransactions] = useState([]);
 
     async function getSafeName() {
         const safeName = await props.contract.methods.safeName().call();
@@ -158,10 +158,12 @@ export default function SafeInfo(props) {
     }
 
     async function getTransactions() {
-        const transactions = await props.contract.methods
-            .transactions(0)
-            .call();
-        setTransactions(transactions);
+        for (var i = 0; i < transactionCount; i++) {
+            const addTransaction = await props.contract.methods
+                .transactions(i)
+                .call();
+            setTransactions(transactions => [...transactions, addTransaction]);
+        }
     }
 
     async function checkIfOwner(address) {
