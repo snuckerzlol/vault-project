@@ -1,8 +1,8 @@
-import Navbar from '../navbar'
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button'
 import './safeinfo.css'
 import { Form, FloatingLabel } from 'react-bootstrap';
+import {useEffect, useState} from 'react';
 
 function TxRow(props) {
 
@@ -36,7 +36,7 @@ function Balance(props) {
     return (
 
         <div className='balance'>
-            <h5>Balance: {props.bal}</h5>
+            <h5>Balance: {props.balance}</h5>
         </div>
     )
 }
@@ -90,6 +90,10 @@ function AddNewTx() {
                     <Form.Control placeholder="Amount" />
                 </FloatingLabel>
 
+                <FloatingLabel label="Duration" className="mb-3">
+                    <Form.Control placeholder="Duration" />
+                </FloatingLabel>
+
                 <Button>Add Transaction</Button>
 
             </div>
@@ -97,22 +101,47 @@ function AddNewTx() {
     )
 }
 
-export default function SafeInfo() {
+export default function SafeInfo(props) {
+    const[safeName, setSafeName] = useState('');
+    const[balance, setBalance] = useState(0);
+    const[transactionCount, setTransactionCount] = useState(0);
+
+    async function getSafeName() {
+        const safeName = await props.walletContract.methods.safeName().call();
+        setSafeName(safeName);
+    }
+
+    async function getBalance() {
+        const balance = await props.web3.eth.getBalance(props.contractAddress);
+        setBalance(balance);
+    }
+
+    async function getTransactionCount() {
+        const transactionCount = await props.walletContract.methods.transactionCount().call();
+        setTransactionCount(transactionCount);
+    }
+
+
+    async function getTransactions() {
+        const transactions = await props.walletContract.methods.transactions(0).call();
+        console.log(transactions);
+    }
+
+    useEffect(() => {
+        getSafeName();
+        getBalance();
+        getTransactionCount();
+        getTransactions();
+    }, []);
 
     return (
-
         <div> 
-
             <div className='safe-info-content mt-3'>
-                <Balance bal='5000'/>
-
+                <span class="safe-name">{safeName}</span>
+                <Balance balance={balance}/>
                 <PendingTxTable/>
-
                 <AddNewTx/>
-
             </div>
-
         </div>
     )
-
 }

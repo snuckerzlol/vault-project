@@ -1,5 +1,4 @@
 import './accesssafe.css'
-import Navbar from '../navbar'
 import Button from 'react-bootstrap/Button'
 import { Link } from 'react-router-dom'
 import { Form, FloatingLabel } from 'react-bootstrap';
@@ -8,8 +7,6 @@ function SafeUnit(props) {
 
     return (
         <div className="d-grid gap-2 mb-1">
-
-            
             <Button variant="outline-primary" size="lg">
                 <Link to= '/vault-project/safeinfo' style={{ textDecoration: 'none' }}>
                     <div>

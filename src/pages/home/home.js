@@ -1,4 +1,3 @@
-import Navbar from '../navbar'
 import {Link} from 'react-router-dom'
 import './home.css'
 
@@ -6,7 +5,7 @@ import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function Home(props) {
+export default function Home() {
 
     const SafeButton = (props) => { // Button component
         

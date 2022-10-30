@@ -3,6 +3,11 @@
     padding: 0 10vw;
 }
 
+.safe-name {
+    font-size: 20pt;
+    font-style: bold;
+}
+
 .balance {
 
     padding-bottom: 5vh;

@@ -83,7 +83,7 @@ export default function App() {
             <Route path= '/vault-project/' element={<Home/>} />
             <Route path= '/vault-project/createsafe' element={<CreateSafe/>} />
             <Route path= '/vault-project/accesssafe' element={<AccessSafe/>} />
-            <Route path= '/vault-project/safeinfo' element={<SafeInfo/>} />
+            <Route path= '/vault-project/safeinfo' element={<SafeInfo web3={web3} walletContract={contract} contractAddress={CONTRACT_ADDRESS}/>} />
           </Routes>
         
         </BrowserRouter>
