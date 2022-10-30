@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 
 function TxRow(props) {
     async function voteTx(approve) {
-        console.log(`Address is ${props.contract.defaultAccount}`);
         await props.contract.methods
             .voteTransaction(props.TxNumber, approve)
-            .send();
+            .send({ from: props.contract.defaultAccount });
     }
 
     return (
@@ -19,10 +18,10 @@ function TxRow(props) {
             <td>{props.TxAmount}</td>
             <td>{props.Votes}/5</td>
             <td>
-                <Button className='approve-deny' onClick={voteTx(true)}>
+                <Button className='approve-deny' onClick={() => voteTx(true)}>
                     Approve
                 </Button>
-                <Button className='approve-deny' onClick={voteTx(false)}>
+                <Button className='approve-deny' onClick={() => voteTx(false)}>
                     Deny
                 </Button>
             </td>
@@ -82,12 +81,11 @@ function PendingTxTable(props) {
 }
 
 function AddNewTx(props) {
-    const[address, setAddress] = useState(null);
-    const[amount, setAmount] = useState(null);
-    const[duration, setDuration] = useState(null);
+    const [address, setAddress] = useState(null);
+    const [amount, setAmount] = useState(null);
+    const [duration, setDuration] = useState(null);
 
-    async function addTransaction() {
-    }
+    async function addTransaction() {}
 
     return (
         <div className='add-new-tx mt-5'>
@@ -97,7 +95,7 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Address'
                         value={address}
-                        onChange={e => setAddress(e.target.value)}
+                        onChange={(e) => setAddress(e.target.value)}
                     />
                 </FloatingLabel>
 
@@ -105,7 +103,7 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Amount'
                         value={amount}
-                        onChange={e => setAmount(e.target.value)}
+                        onChange={(e) => setAmount(e.target.value)}
                     />
                 </FloatingLabel>
 
@@ -113,7 +111,7 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Duration'
                         value={duration}
-                        onChange={e => setDuration(e.target.value)}
+                        onChange={(e) => setDuration(e.target.value)}
                     />
                 </FloatingLabel>
 
@@ -124,11 +122,11 @@ function AddNewTx(props) {
 }
 
 export default function SafeInfo(props) {
-    const[safeName, setSafeName] = useState(null);
-    const[balance, setBalance] = useState(0);
-    const[transactionCount, setTransactionCount] = useState(0);
-    const[ownerAddress, setOwnerAddress] = useState(null);
-    const[isOwner, setIsOwner] = useState(false);
+    const [safeName, setSafeName] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [transactionCount, setTransactionCount] = useState(0);
+    const [ownerAddress, setOwnerAddress] = useState(null);
+    const [isOwner, setIsOwner] = useState(false);
 
     async function getSafeName() {
         const safeName = await props.contract.methods.safeName().call();
@@ -156,11 +154,14 @@ export default function SafeInfo(props) {
 
     async function checkIfOwner(address) {
         try {
-            const isOwner = await props.walletContract.methods.isOwner(address).call();
+            const isOwner = await props.walletContract.methods
+                .isOwner(address)
+                .call();
             console.log('Owner ' + address + '? ' + isOwner);
             setIsOwner(isOwner);
         } catch (e) {
             console.log('Owner ' + address + '? Unauthorized user');
+            setIsOwner(true); // remove this
         }
     }
 
@@ -174,20 +175,20 @@ export default function SafeInfo(props) {
 
     return (
         <div>
-            {isOwner ? 
+            {isOwner ? (
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <Balance balance={balance} />
-                    <PendingTxTable contract={props.contract}/>
-                    <AddNewTx contract={props.contract}/>
+                    <PendingTxTable contract={props.contract} />
+                    <AddNewTx contract={props.contract} />
                 </div>
-            :
+            ) : (
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <br />
                     <span>Unauthorized user</span>
                 </div>
-            }
+            )}
         </div>
     );
 }

@@ -15,17 +15,18 @@ import './App.css';
 
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from './contracts/config';
 
+const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
+const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+
 export default function App() {
-    const [haveMetamask, setHaveMetamask] = useState(true);     // check if the browser has MetaMask installed. 
-    const [metamaskAddress, setMetamaskAddress] = useState(null);               // address of connected MetaMask account. 
-    const [network, setNetwork] = useState(null);               // network the account is using. 
-    const [balance, setBalance] = useState(0);                  // balance of connected MetaMask account. 
-    const [isConnected, setIsConnected] = useState(false);      // check if is connected to MetaMask account. 
+    const [haveMetamask, setHaveMetamask] = useState(true); // check if the browser has MetaMask installed.
+    const [metamaskAddress, setMetamaskAddress] = useState(null); // address of connected MetaMask account.
+    const [network, setNetwork] = useState(null); // network the account is using.
+    const [balance, setBalance] = useState(0); // balance of connected MetaMask account.
+    const [isConnected, setIsConnected] = useState(false); // check if is connected to MetaMask account.
 
     const { ethereum } = window;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-    const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 
     const connectWallet = async () => {
         // function that connect to METAMASK account, activated when clicking on 'connect'.
@@ -51,7 +52,9 @@ export default function App() {
             }
             setMetamaskAddress(accounts[0]);
             contract.defaultAccount = accounts[0];
-            console.log(contract.defaultAccount);
+            console.log(
+                `${contract.defaultAccount} has type ${typeof contract}`
+            );
             setBalance(bal);
             setIsConnected(true);
             console.log(accounts[0]);
