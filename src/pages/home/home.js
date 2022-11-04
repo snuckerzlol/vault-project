@@ -16,9 +16,7 @@ export default function Home() {
                     <Button> {props.name} </Button>
                 </ButtonGroup>
             </div>
-
         )
-        
     }
 
     return (

@@ -8,10 +8,9 @@ import { useEffect, useState } from 'react';
 
 function TxRow(props) {
     async function voteTx(approve) {
-        console.log(`Address is ${props.contract.defaultAccount}`);
         await props.contract.methods
             .voteTransaction(props.TxNumber, approve)
-            .send();
+            .send({ from: props.contract.defaultAccount });
     }
 
     async function exectueTx() {
@@ -41,6 +40,7 @@ function TxRow(props) {
         )
     }
     else {
+        
         return (
             <tr>
                 <td>{props.TxNumber}</td>
@@ -62,6 +62,24 @@ function TxRow(props) {
             </tr>
         )
     };
+    return (
+        <tr>
+            <td>{props.TxNumber}</td>
+            <td>{props.Recepient}</td>
+            <td>{props.TxAmount}</td>
+            <td>
+                {props.forVotes}/{props.minVotes}
+            </td>
+            <td>
+                <Button className='approve-deny' onClick={() => voteTx(true)}>
+                    Approve
+                </Button>
+                <Button className='approve-deny' onClick={() => voteTx(false)}>
+                    Deny
+                </Button>
+            </td>
+        </tr>
+    );
 }
 // Table content here.
 // const TxTableContent = [
@@ -118,12 +136,14 @@ function PendingTxTable(props) {
 }
 
 function AddNewTx(props) {
-    const[address, setAddress] = useState(null);
-    const[amount, setAmount] = useState(null);
-    const[duration, setDuration] = useState(null);
+    const [address, setAddress] = useState(null);
+    const [amount, setAmount] = useState(null);
+    const [duration, setDuration] = useState(null);
 
     async function addTransaction() {
-        props.contract.methods.addTransaction(address, amount, duration).send({from: props.metamaskAddress});
+        props.contract.methods
+            .addTransaction(address, amount, duration)
+            .send({ from: props.metamaskAddress });
     }
 
     return (
@@ -134,7 +154,7 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Address'
                         value={address}
-                        onChange={e => setAddress(e.target.value)}
+                        onChange={(e) => setAddress(e.target.value)}
                     />
                 </FloatingLabel>
 
@@ -142,7 +162,7 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Amount'
                         value={amount}
-                        onChange={e => setAmount(e.target.value)}
+                        onChange={(e) => setAmount(e.target.value)}
                     />
                 </FloatingLabel>
 
@@ -150,24 +170,30 @@ function AddNewTx(props) {
                     <Form.Control
                         placeholder='Duration'
                         value={duration}
-                        onChange={e => setDuration(e.target.value)}
+                        onChange={(e) => setDuration(e.target.value)}
                     />
                 </FloatingLabel>
 
-                <Button onClick={() => {addTransaction()}}>Add Transaction</Button>
+                <Button
+                    onClick={() => {
+                        addTransaction();
+                    }}
+                >
+                    Add Transaction
+                </Button>
             </div>
         </div>
     );
 }
 
 export default function SafeInfo(props) {
-    const[safeName, setSafeName] = useState(null);
-    const[balance, setBalance] = useState(0);
-    const[minVotes, setMinVotes] = useState(null);
-    const[transactionCount, setTransactionCount] = useState(0);
-    const[ownerAddress, setOwnerAddress] = useState(null);
-    const[isOwner, setIsOwner] = useState(false);
-    const[transactions, setTransactions] = useState([]);
+    const [safeName, setSafeName] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [minVotes, setMinVotes] = useState(null);
+    const [transactionCount, setTransactionCount] = useState(0);
+    const [ownerAddress, setOwnerAddress] = useState(null);
+    const [isOwner, setIsOwner] = useState(false);
+    const [transactions, setTransactions] = useState([]);
 
     async function getSafeName() {
         const safeName = await props.contract.methods.safeName().call();
@@ -196,17 +222,23 @@ export default function SafeInfo(props) {
             const addTransaction = await props.contract.methods
                 .transactions(i)
                 .call();
-            setTransactions(transactions => [...transactions, addTransaction]);
+            setTransactions((transactions) => [
+                ...transactions,
+                addTransaction,
+            ]);
         }
     }
 
     async function checkIfOwner(address) {
         try {
-            const isOwner = await props.contract.methods.isOwner(address).call();
+            const isOwner = await props.contract.methods
+                .isOwner(address)
+                .call();
             console.log('Owner ' + address + '? ' + isOwner);
             setIsOwner(isOwner);
         } catch (e) {
             console.log('Owner ' + address + '? Unauthorized user');
+            setIsOwner(true); // remove this
         }
     }
 
@@ -221,7 +253,7 @@ export default function SafeInfo(props) {
 
     return (
         <div>
-            {isOwner ? 
+            {isOwner ? (
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <Balance balance={balance} />
@@ -230,18 +262,18 @@ export default function SafeInfo(props) {
                         transactions={transactions}
                         minVotes={minVotes}
                     />
-                    <AddNewTx 
+                    <AddNewTx
                         contract={props.contract}
                         metamaskAddress={props.metamaskAddress}
                     />
                 </div>
-            :
+            ) : (
                 <div className='safe-info-content mt-3'>
                     <span class='safe-name'>{safeName}</span>
                     <br />
                     <span>Unauthorized user</span>
                 </div>
-            }
+            )}
         </div>
     );
 }
