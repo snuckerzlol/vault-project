@@ -126,9 +126,9 @@ function PendingTxTable(props) {
                     <TxRow TxNumber= '3' Recepient='99001' TxAmount='0.0004' Votes='1'/> */}
                     {TxTableContent.map((row, index) => (
                         <TxRow
-                            TxNumber={index + 1}
+                            TxNumber={index}
                             Recepient={row.destination}
-                            TxAmount={row.amount}
+                            TxAmount={row.amount / Math.pow(10, 18)}
                             forVotes={row.forVotes}
                             minVotes={props.minVotes}
                             contract={props.contract}
@@ -146,7 +146,7 @@ function AddNewTx(props) {
     const [duration, setDuration] = useState(null);
 
     async function addTransaction() {
-        const wei = Math.round(Math.pow(amount, 18));
+        const wei = Math.round(amount * Math.pow(10, 18));
         props.contract.methods
             .addTransaction(address, wei, duration)
             .send({ from: props.metamaskAddress });
