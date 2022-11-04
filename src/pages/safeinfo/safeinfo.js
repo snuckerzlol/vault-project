@@ -4,8 +4,6 @@ import './safeinfo.css';
 import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
-
-    
 function TxRow(props) {
     async function voteTx(approve) {
         await props.contract.methods
@@ -14,54 +12,61 @@ function TxRow(props) {
     }
 
     async function exectueTx() {
-
-        await props.contract.methods
-            .executeTransaction(props.TxNumber)
-            .send();
+        await props.contract.methods.executeTransaction(props.TxNumber).send();
     }
 
     if (props.forVotes === props.minVotes) {
-
         return (
             <tr>
                 <td>{props.TxNumber}</td>
                 <td>{props.Recepient}</td>
                 <td>{props.TxAmount}</td>
-                <td>{props.forVotes}/{props.minVotes}</td>
-
-                <div> 
-                    <td>
-                        <Button className='approve-deny' onClick={exectueTx()}>
-                            Execute
-                        </Button>
-                    </td>        
-                </div>
-            </tr>
-        )
-    }
-    else {
-
-        return (
-            <tr>
-                <td>{props.TxNumber}</td>
-                <td>{props.Recepient}</td>
-                <td>{props.TxAmount}</td>
-                <td>{props.forVotes}/{props.minVotes}</td>
+                <td>
+                    {props.forVotes}/{props.minVotes}
+                </td>
 
                 <div>
                     <td>
-                        <Button className='approve-deny' onClick={voteTx(true)}>
+                        <Button
+                            className='approve-deny'
+                            onClick={() => exectueTx()}
+                        >
+                            Execute
+                        </Button>
+                    </td>
+                </div>
+            </tr>
+        );
+    } else {
+        return (
+            <tr>
+                <td>{props.TxNumber}</td>
+                <td>{props.Recepient}</td>
+                <td>{props.TxAmount}</td>
+                <td>
+                    {props.forVotes}/{props.minVotes}
+                </td>
+
+                <div>
+                    <td>
+                        <Button
+                            className='approve-deny'
+                            onClick={() => voteTx(true)}
+                        >
                             Approve
                         </Button>
 
-                        <Button className='approve-deny' onClick={voteTx(false)}>
+                        <Button
+                            className='approve-deny'
+                            onClick={() => voteTx(false)}
+                        >
                             Deny
                         </Button>
                     </td>
                 </div>
             </tr>
-        )
-    };
+        );
+    }
     return (
         <tr>
             <td>{props.TxNumber}</td>
@@ -141,8 +146,9 @@ function AddNewTx(props) {
     const [duration, setDuration] = useState(null);
 
     async function addTransaction() {
+        const wei = Math.round(Math.pow(amount, 18));
         props.contract.methods
-            .addTransaction(address, amount, duration)
+            .addTransaction(address, wei, duration)
             .send({ from: props.metamaskAddress });
     }
 

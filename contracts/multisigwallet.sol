@@ -41,6 +41,7 @@ contract MultiSigWallet {
         // expiryDuration = block.timestamp + _duration;
     }
 
+    // These should be removed or updated so that only owners can access them
     function setMinVotes(uint256 _minVotes) public {
         minVotes = _minVotes;
     }
