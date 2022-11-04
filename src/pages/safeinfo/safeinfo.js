@@ -5,7 +5,7 @@ import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
 
-
+    
 function TxRow(props) {
     async function voteTx(approve) {
         await props.contract.methods
@@ -40,7 +40,7 @@ function TxRow(props) {
         )
     }
     else {
-        
+
         return (
             <tr>
                 <td>{props.TxNumber}</td>
