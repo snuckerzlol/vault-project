@@ -1,18 +1,15 @@
 {
   "files": {
-    "main.css": "/vault-project/static/css/main.9fd6620a.css",
-    "main.js": "/vault-project/static/js/main.65e0eb9e.js",
+    "main.css": "/vault-project/static/css/main.5067b5d8.css",
+    "main.js": "/vault-project/static/js/main.69c22680.js",
     "static/js/787.a54a3ee9.chunk.js": "/vault-project/static/js/787.a54a3ee9.chunk.js",
-    "static/media/bgpic.jpg": "/vault-project/static/media/bgpic.4c406bbef1c5783a43e5.jpg",
-    "static/media/METAMASK.png": "/vault-project/static/media/METAMASK.b52147f5d62d57855c5e.png",
-    "static/media/logo.svg": "/vault-project/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/vault-project/index.html",
-    "main.9fd6620a.css.map": "/vault-project/static/css/main.9fd6620a.css.map",
-    "main.65e0eb9e.js.map": "/vault-project/static/js/main.65e0eb9e.js.map",
+    "main.5067b5d8.css.map": "/vault-project/static/css/main.5067b5d8.css.map",
+    "main.69c22680.js.map": "/vault-project/static/js/main.69c22680.js.map",
     "787.a54a3ee9.chunk.js.map": "/vault-project/static/js/787.a54a3ee9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9fd6620a.css",
-    "static/js/main.65e0eb9e.js"
+    "static/css/main.5067b5d8.css",
+    "static/js/main.69c22680.js"
   ]
 }
