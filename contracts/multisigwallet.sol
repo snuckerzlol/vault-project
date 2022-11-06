@@ -62,19 +62,6 @@ contract MultiSigWallet {
         // expiryDuration = block.timestamp + _duration;
     }
 
-    // These should be removed or updated so that only owners can access them
-    function setMinVotes(uint256 _id, uint256 _minVotes) public {
-        transactions[_id].minVotes = _minVotes;
-    }
-
-    function setSafeName(string memory _safeName) public {
-        safeName = _safeName;
-    }
-
-    function addOwner(address _newOwner) public {
-        isOwner[_newOwner] = true;
-    }
-
     function voteTransaction(
         address origin,
         uint256 _id,

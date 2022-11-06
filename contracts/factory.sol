@@ -6,12 +6,13 @@ contract Factory {
     mapping(address => address payable[]) safes;
 
     function createNewSafe(string memory _safeName, address[] memory _owners)
-        public
+        public returns (address payable)
     {
         MultiSigWallet safe = new MultiSigWallet(_safeName, _owners);
         for (uint256 i = 0; i < _owners.length; ++i) {
             safes[_owners[i]].push(payable(address(safe)));
         }
+        return address(safe);
     }
 
     // Explicitly make a getter method so users can only access the safes they
