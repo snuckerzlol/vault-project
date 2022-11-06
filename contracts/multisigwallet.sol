@@ -102,6 +102,8 @@ contract MultiSigWallet {
         uint256 _minVotes
     ) public onlyFactory onlyOwner(origin) {
         require(_amount > 0, "Transaction must be a positive amount.");
+        require(_minVotes > 1, "Transactions must have at least two voters.");
+
         Transaction storage t = transactions[transactionCount];
         t.exists = true;
         t.amount = _amount;
