@@ -24,10 +24,11 @@ function SafeUnit(props) {
 
 export default function AccessSafe(props) {
     const [safes, setSafes] = useState({});
+
     useEffect(() => {
         getSafeInfo();
         setTimeout(console.log(`safes=${JSON.stringify(safes)}`), 200);
-    }, []);
+    }, [props.metamaskAddress]);
 
     const getSafeInfo = async () => {
         const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');

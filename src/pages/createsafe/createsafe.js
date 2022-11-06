@@ -6,25 +6,26 @@ import { InputGroup, FloatingLabel } from 'react-bootstrap';
 import React from 'react';
 
 export default class CreateSafe extends React.Component {
-
     constructor(props) {
 
         super(props);
-        this.state = {addresses: [], temp: ''};
+        this.state = {
+            addresses: [], 
+            name: '',
+            temp: ''
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.submitSafe = this.submitSafe.bind(this);
     }
     
     handleChange(e) {
-
         this.setState({temp: e.target.value});
         console.log(this.state.temp)
         e.preventDefault();
     }
     
     handleSubmit(e) {
-
         this.setState(prevState => ({
             addresses: [...prevState.addresses, this.state.temp]
           }))
@@ -32,11 +33,17 @@ export default class CreateSafe extends React.Component {
         e.preventDefault();
     }
 
-    submitSafe(e) {
+    async submitSafe(e) {
         e.preventDefault();
-        console.log(this.state.temp);   // Is this the name?
+        console.log(this.state.name);
         console.log(this.state.addresses);
-        this.props.contract.methods.createNewSafe(this.state.temp, this.state.addresses).call();
+        const address = await this.props.contract.methods.createNewSafe(this.state.name, this.state.addresses).send({ from: this.props.metamaskAddress });
+        console.log(address);
+        // <SafeInfo
+        //     web3={this.props.web3}
+        //     contract={this.props.contract}
+        //     metamaskAddress={this.props.metamaskAddress}
+        // />
     }
 
     render() {
@@ -52,7 +59,9 @@ export default class CreateSafe extends React.Component {
     
                         <FloatingLabel label='Safe Name' className='mb-3'>
                             <Form.Control
-                                placeholder='Safe Name'/>
+                                placeholder='Safe Name'
+                                onChange={(e) => this.setState({name: e.target.value})}
+                                />
                         </FloatingLabel>
     
                         <InputGroup>
@@ -74,12 +83,7 @@ export default class CreateSafe extends React.Component {
                                 </h6>
                                 ))
                             }
- 
-                        <FloatingLabel label='Number of votes' className='mb-3'>
-                            <Form.Control
-                                placeholder='Number of votes'/>
-                        </FloatingLabel>
-                        
+                         
                         <Button size='lg' type='submit'>Submit</Button>
                     </Form>
     
@@ -88,6 +92,8 @@ export default class CreateSafe extends React.Component {
         )
     }
 }
+
+
 
 
 // export default function CreateSafe() {

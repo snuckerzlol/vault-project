@@ -90,11 +90,19 @@ export default function App() {
                     <Route path='/vault-project/' element={<Home />} />
                     <Route
                         path='/vault-project/createsafe'
-                        element={<CreateSafe contract={contract} />}
+                        element={<CreateSafe
+                            web3={web3}
+                            contract={contract}
+                            metamaskAddress={metamaskAddress}
+                        />}
                     />
                     <Route
                         path='/vault-project/accesssafe'
-                        element={<AccessSafe contract={contract} />}
+                        element={<AccessSafe
+                            web3={web3}
+                            contract={contract}
+                            metamaskAddress={metamaskAddress}
+                        />}
                     />
                     <Route
                         path='/vault-project/safeinfo'

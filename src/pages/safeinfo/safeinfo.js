@@ -101,6 +101,22 @@ function SafeAddress(props) {
     );
 }
 
+function OwnerCount(props) {
+    return (
+        <div className='ownerCount'>
+            <span>Owner Count: {props.ownerCount}</span>
+        </div>
+    );
+}
+
+function TransactionCount(props) {
+    return (
+        <div className='transactionCount'>
+            <span>Transaction Count: {props.transactionCount}</span>
+        </div>
+    );
+}
+
 function PendingTxTable(props) {
     const TxTableContent = props.transactions;
     return (
@@ -199,6 +215,7 @@ export default function SafeInfo(props) {
     const [balance, setBalance] = useState(0);
     const [transactionCount, setTransactionCount] = useState(0);
     const [ownerAddress, setOwnerAddress] = useState(null);
+    const [ownerCount, setOwnerCount] = useState(0);
     const [isOwner, setIsOwner] = useState(false);
     const [transactions, setTransactions] = useState([]);
 
@@ -226,7 +243,30 @@ export default function SafeInfo(props) {
         const transactionCount = await safeContract.methods
             .transactionCount()
             .call();
+        setTransactionCount(transactionCount);
         return transactionCount;
+    }
+
+    async function getOwnerCount() {
+        const numOwners = await safeContract.methods
+            .numOwners()
+            .call();
+        setOwnerCount(numOwners);
+        return numOwners;
+    }
+
+    async function getTransactions() {
+        const transactionCount = await getTransactionCount();
+        console.log(`getting ${transactionCount} transactions...`);
+        setTransactionCount(transactionCount);
+        const newTransactions = [];
+        for (var i = 0; i < transactionCount; i++) {
+            const newTransaction = await safeContract.methods
+                .transactions(i)
+                .call();
+            newTransactions.push(newTransaction);
+        }
+        setTransactions(newTransactions);
     }
 
     async function getTransactions() {
@@ -259,6 +299,7 @@ export default function SafeInfo(props) {
         getBalance();
         // getMinVotes();
         getTransactions();
+        getOwnerCount();
         checkIfOwner(props.metamaskAddress);
         console.log(`address=${safeAddress}`);
     }, [props.metamaskAddress]);
@@ -274,6 +315,9 @@ export default function SafeInfo(props) {
 
                     <Balance balance={balance} />
                     <SafeAddress address={safeAddress} />
+                    <TransactionCount transactionCount={transactionCount} />
+                    <OwnerCount ownerCount={ownerCount} />
+
                     <PendingTxTable
                         contract={props.contract}
                         safeAddress={safeAddress}
