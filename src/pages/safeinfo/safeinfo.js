@@ -119,7 +119,7 @@ function PendingTxTable(props) {
                             Recepient={row.destination}
                             TxAmount={row.amount / Math.pow(10, 18)}
                             forVotes={row.forVotes}
-                            minVotes={props.minVotes}
+                            minVotes={row.minVotes}
                             contract={props.contract}
                             safeAddress={props.safeAddress}
                         />
@@ -187,7 +187,6 @@ function AddNewTx(props) {
 export default function SafeInfo(props) {
     const [safeName, setSafeName] = useState(null);
     const [balance, setBalance] = useState(0);
-    const [minVotes, setMinVotes] = useState(null);
     const [transactionCount, setTransactionCount] = useState(0);
     const [ownerAddress, setOwnerAddress] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
@@ -208,10 +207,10 @@ export default function SafeInfo(props) {
     }
 
     // TODO: will be diff for each transaction... needs updating
-    async function getMinVotes() {
-        // const minVotes = await props.contract.methods.minVotes().call();
-        setMinVotes(2);
-    }
+    // async function getMinVotes() {
+    //     // const minVotes = await props.contract.methods.minVotes().call();
+    //     setMinVotes(2);
+    // }
 
     async function getTransactionCount() {
         const transactionCount = await safeContract.methods
@@ -248,7 +247,7 @@ export default function SafeInfo(props) {
     useEffect(() => {
         getSafeName();
         getBalance();
-        getMinVotes();
+        // getMinVotes();
         getTransactions();
         checkIfOwner(props.metamaskAddress);
         console.log(`address=${safeAddress}`);
@@ -257,14 +256,16 @@ export default function SafeInfo(props) {
     return (
         <div>
             {isOwner ? (
-                <div className='safe-info-content mt-3'>
+                <div
+                    className='safe-info-content mt-3'
+                    style={{ paddingBottom: 15 }}
+                >
                     <span class='safe-name'>{safeName}</span>
                     <Balance balance={balance} />
                     <PendingTxTable
                         contract={props.contract}
                         safeAddress={safeAddress}
                         transactions={transactions}
-                        minVotes={minVotes}
                     />
                     <AddNewTx
                         contract={props.contract}
