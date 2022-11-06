@@ -2,41 +2,123 @@ import './createsafe.css'
 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { FormControl, FormGroup, InputGroup } from 'react-bootstrap';
+import { InputGroup, FloatingLabel } from 'react-bootstrap';
+import React from 'react';
 
-export default function CreateSafe() {
+export default class CreateSafe extends React.Component {
 
-    return (
+    constructor(props) {
 
-        <div>
+        super(props);
+        this.state = {addresses: [], temp: ''};
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    
+    handleChange(e) {
 
-            <div className='content'>
+        this.setState({temp: e.target.value});
+        console.log(this.state.temp)
+        e.preventDefault();
+    }
+    
+    handleSubmit(e) {
 
-                <h5 className='title fs-3 fw-normal'>Connect your personal safes</h5>
-                <Form>
+        this.setState(prevState => ({
+            addresses: [...prevState.addresses, this.state.temp]
+          }))
+        console.log(this.state.addresses);
+        e.preventDefault();
+    }
 
-                    <InputGroup size='lg'>
-                        <Button variant="outline-secondary">
-                            +
-                        </Button>
-                        <FormGroup>
-                            <FormControl size='lg' placeholder='Safe Name' ></FormControl>
-                        </FormGroup>
+    render() {
 
-                    </InputGroup>
+        return (
 
-                    <FormGroup className='formbox'>
-                        <FormControl size='lg' placeholder=''></FormControl>
-                    </FormGroup>
+            <div>
+    
+                <div className='content'>
+    
+                    <h5 className='title fs-3 fw-normal'>Connect your personal safes</h5>
+                    <Form>
+    
+                        <FloatingLabel label='Safe Name' className='mb-3'>
+                            <Form.Control
+                                placeholder='Safe Name'/>
+                        </FloatingLabel>
+    
+                        <InputGroup>
+                            <Button variant="outline-secondary" className='mb-3' onClick={this.handleSubmit}>
+                                +
+                            </Button>
+                            <FloatingLabel label='Address' className='mb-3'>
+                                <Form.Control
+                                    name='Address'
+                                    placeholder='Address'
+                                    onChange={this.handleChange}/>
+                            </FloatingLabel>
+                        </InputGroup>
 
-                    <FormGroup className='voteformbox'>
-                        <FormControl size='lg' placeholder='Number of votes'></FormControl>
-                    </FormGroup>
-                    <Button size='lg'>Submit</Button>
-                </Form>
-
+                            {this.state.addresses.map((a, index) => (
+                            
+                                <h6 key={index} className='mb-1'>
+                                    {a}
+                                </h6>
+                                ))
+                            }
+ 
+                        <FloatingLabel label='Number of votes' className='mb-3'>
+                            <Form.Control
+                                placeholder='Number of votes'/>
+                        </FloatingLabel>
+                        
+                        <Button size='lg' type='submit'>Submit</Button>
+                    </Form>
+    
+                </div>
             </div>
-        </div>
-    )
-
+        )
+    }
 }
+
+
+// export default function CreateSafe() {
+
+//     return (
+
+//         <div>
+
+//             <div className='content'>
+
+//                 <h5 className='title fs-3 fw-normal'>Connect your personal safes</h5>
+//                 <Form>
+
+//                     <FloatingLabel label='Safe Name' className='mb-3'>
+//                         <Form.Control
+//                             placeholder='Safe Name'/>
+//                     </FloatingLabel>
+
+//                     <InputGroup>
+//                         <Button variant="outline-secondary" className='mb-3' onClick={handleSubmit}>
+//                             +
+//                         </Button>
+//                         <FloatingLabel label='Address' className='mb-3'>
+//                             <Form.Control
+//                                 name='Address'
+//                                 placeholder='Address'
+//                                 onChange={handleChange}/>
+//                         </FloatingLabel>
+//                     </InputGroup>
+            
+//                     <FloatingLabel label='Number of votes' className='mb-3'>
+//                         <Form.Control
+//                             placeholder='Number of votes'/>
+//                     </FloatingLabel>
+                    
+//                     <Button size='lg' type='submit'>Submit</Button>
+//                 </Form>
+
+//             </div>
+//         </div>
+//     )
+// }
