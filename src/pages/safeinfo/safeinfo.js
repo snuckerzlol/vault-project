@@ -3,16 +3,22 @@ import Button from 'react-bootstrap/Button';
 import './safeinfo.css';
 import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import Web3 from 'web3';
+import { SAFE_ABI } from '../../contracts/config';
+
+const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
 
 function TxRow(props) {
     async function voteTx(approve) {
         await props.contract.methods
-            .voteTransaction(props.TxNumber, approve)
+            .voteTransaction(props.safeAddress, props.TxNumber, approve)
             .send({ from: props.contract.defaultAccount });
     }
 
-    async function exectueTx() {
-        await props.contract.methods.executeTransaction(props.TxNumber).send();
+    async function executeTx() {
+        await props.contract.methods
+            .executeTransaction(props.safeAddress, props.TxNumber)
+            .send({ from: props.contract.defaultAccount });
     }
 
     if (props.forVotes >= props.minVotes) {
@@ -29,7 +35,7 @@ function TxRow(props) {
                     <td>
                         <Button
                             className='approve-deny'
-                            onClick={() => exectueTx()}
+                            onClick={() => executeTx()}
                         >
                             Execute
                         </Button>
@@ -114,6 +120,7 @@ function PendingTxTable(props) {
                             forVotes={row.forVotes}
                             minVotes={props.minVotes}
                             contract={props.contract}
+                            safeAddress={props.safeAddress}
                         />
                     ))}
                 </tbody>
@@ -128,9 +135,11 @@ function AddNewTx(props) {
     const [duration, setDuration] = useState(null);
 
     async function addTransaction() {
+        // TODO: add a field for min votes and use it here
+        const minVotes = 3;
         const wei = Math.round(amount * Math.pow(10, 18));
         props.contract.methods
-            .addTransaction(address, wei, duration)
+            .addTransaction(props.safeAddress, address, wei, duration, minVotes)
             .send({ from: props.metamaskAddress });
     }
 
@@ -183,23 +192,27 @@ export default function SafeInfo(props) {
     const [isOwner, setIsOwner] = useState(false);
     const [transactions, setTransactions] = useState([]);
 
+    const safeContract = new web3.eth.Contract(SAFE_ABI, props.safeAddress);
+
     async function getSafeName() {
-        const safeName = await props.contract.methods.safeName().call();
+        const safeName = await safeContract.methods.safeName().call();
         setSafeName(safeName);
     }
 
     async function getBalance() {
-        const balance = await props.web3.eth.getBalance(props.contractAddress);
+        const balance = await props.web3.eth.getBalance(props.safeAddress);
         setBalance(balance);
     }
 
+    // will be diff for each transaction... needs updating
     async function getMinVotes() {
-        const minVotes = await props.contract.methods.minVotes().call();
+        // const minVotes = await props.contract.methods.minVotes().call();
+        const minVotes = 1;
         setMinVotes(minVotes);
     }
 
     async function getTransactionCount() {
-        const transactionCount = await props.contract.methods
+        const transactionCount = await safeContract.methods
             .transactionCount()
             .call();
         setTransactionCount(transactionCount);
@@ -207,7 +220,7 @@ export default function SafeInfo(props) {
 
     async function getTransactions() {
         for (var i = 0; i < transactionCount; i++) {
-            const addTransaction = await props.contract.methods
+            const addTransaction = await safeContract.methods
                 .transactions(i)
                 .call();
             setTransactions((transactions) => [
@@ -219,9 +232,7 @@ export default function SafeInfo(props) {
 
     async function checkIfOwner(address) {
         try {
-            const isOwner = await props.contract.methods
-                .isOwner(address)
-                .call();
+            const isOwner = await safeContract.methods.isOwner(address).call();
             console.log('Owner ' + address + '? ' + isOwner);
             setIsOwner(isOwner);
         } catch (e) {
@@ -247,12 +258,14 @@ export default function SafeInfo(props) {
                     <Balance balance={balance} />
                     <PendingTxTable
                         contract={props.contract}
+                        safeAddress={props.safeAddress}
                         transactions={transactions}
                         minVotes={minVotes}
                     />
                     <AddNewTx
                         contract={props.contract}
                         metamaskAddress={props.metamaskAddress}
+                        safeAddress={props.safeAddress}
                     />
                 </div>
             ) : (

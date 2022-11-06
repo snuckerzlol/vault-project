@@ -13,7 +13,11 @@ import Navbar from './pages/navbar';
 
 import './App.css';
 
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from './contracts/config';
+import {
+    CONTRACT_ABI,
+    CONTRACT_ADDRESS,
+    TEST_SAFE_ADDRESS,
+} from './contracts/config';
 
 const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
 const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
@@ -98,7 +102,7 @@ export default function App() {
                             <SafeInfo
                                 web3={web3}
                                 contract={contract}
-                                contractAddress={CONTRACT_ADDRESS}
+                                safeAddress={TEST_SAFE_ADDRESS}
                                 metamaskAddress={metamaskAddress}
                             />
                         }
