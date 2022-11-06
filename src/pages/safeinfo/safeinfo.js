@@ -15,7 +15,7 @@ function TxRow(props) {
         await props.contract.methods.executeTransaction(props.TxNumber).send();
     }
 
-    if (props.forVotes === props.minVotes) {
+    if (props.forVotes >= props.minVotes) {
         return (
             <tr>
                 <td>{props.TxNumber}</td>
