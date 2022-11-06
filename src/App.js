@@ -84,7 +84,10 @@ export default function App() {
         <div className='App'>
             <BrowserRouter>
                 <div>
-                    <Navbar connectTo={connectWallet} />
+                    <Navbar
+                        metamaskAddress={metamaskAddress}
+                        connectTo={connectWallet}
+                    />
                 </div>
                 <Routes>
                     <Route path='/vault-project/' element={<Home />} />
