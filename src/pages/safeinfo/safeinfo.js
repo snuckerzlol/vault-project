@@ -160,11 +160,11 @@ function AddNewTx(props) {
     const [address, setAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [duration, setDuration] = useState('');
+    const [minVotes, setMinVotes] = useState(2);
 
     async function addTransaction() {
         // TODO: add a field for min votes and use it here
         const wei = Math.round(amount * Math.pow(10, 18));
-        const minVotes = 2;
         props.contract.methods
             .addTransaction(props.safeAddress, address, wei, duration, minVotes)
             .send({ from: props.metamaskAddress });
@@ -195,6 +195,14 @@ function AddNewTx(props) {
                         placeholder='Duration'
                         value={duration}
                         onChange={(e) => setDuration(e.target.value)}
+                    />
+                </FloatingLabel>
+
+                <FloatingLabel label='Minimum Votes' className='mb-3'>
+                    <Form.Control
+                        placeholder='Minimum Votes'
+                        value={minVotes}
+                        onChange={(e) => setMinVotes(e.target.value)}
                     />
                 </FloatingLabel>
 
