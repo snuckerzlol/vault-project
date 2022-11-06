@@ -17,7 +17,7 @@ contract Factory {
 
     // Explicitly make a getter method so users can only access the safes they
     // own.
-    function GetSafes() public view returns (address payable[] memory) {
+    function getSafes() public view returns (address payable[] memory) {
         return safes[msg.sender];
     }
 

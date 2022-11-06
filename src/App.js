@@ -94,7 +94,7 @@ export default function App() {
                     />
                     <Route
                         path='/vault-project/accesssafe'
-                        element={<AccessSafe />}
+                        element={<AccessSafe contract={contract} />}
                     />
                     <Route
                         path='/vault-project/safeinfo'
