@@ -137,9 +137,9 @@ contract MultiSigWallet {
             transactions[_id].forVotes >= transactions[_id].minVotes,
             "Number of votes has not been reached."
         );
-        (bool sucessfulTransaction, bytes memory returnBytes) = transactions[
-            _id
-        ].destination.call{value: transactions[_id].amount}("");
+        (bool sucessfulTransaction, ) = transactions[_id].destination.call{
+            value: transactions[_id].amount
+        }("");
 
         require(sucessfulTransaction, "Transaction was unsuccessful"); // Not sure if necessary
 
