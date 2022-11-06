@@ -67,24 +67,6 @@ function TxRow(props) {
             </tr>
         );
     }
-    return (
-        <tr>
-            <td>{props.TxNumber}</td>
-            <td>{props.Recepient}</td>
-            <td>{props.TxAmount}</td>
-            <td>
-                {props.forVotes}/{props.minVotes}
-            </td>
-            <td>
-                <Button className='approve-deny' onClick={() => voteTx(true)}>
-                    Approve
-                </Button>
-                <Button className='approve-deny' onClick={() => voteTx(false)}>
-                    Deny
-                </Button>
-            </td>
-        </tr>
-    );
 }
 // Table content here.
 // const TxTableContent = [
