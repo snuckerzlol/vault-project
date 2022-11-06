@@ -87,8 +87,16 @@ function TxRow(props) {
 
 function Balance(props) {
     return (
-        <div className='balance'>
-            <h5>Balance: {props.balance}</h5>
+        <div className='balance' style={{ display: 'inline' }}>
+            <h5>Balance: {props.balance} ETH</h5>
+        </div>
+    );
+}
+
+function SafeAddress(props) {
+    return (
+        <div className='safeAddress' style={{ display: 'inline' }}>
+            <h5>Safe Address: {props.address}</h5>
         </div>
     );
 }
@@ -97,7 +105,9 @@ function PendingTxTable(props) {
     const TxTableContent = props.transactions;
     return (
         <div>
-            <h1 className='fs-3 fw-normal'>Pending Transactions</h1>
+            <h1 className='fs-3 fw-normal' style={{ paddingTop: 20 }}>
+                Pending Transactions
+            </h1>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -203,7 +213,7 @@ export default function SafeInfo(props) {
 
     async function getBalance() {
         const balance = await props.web3.eth.getBalance(safeAddress);
-        setBalance(balance);
+        setBalance(balance / Math.pow(10, 18));
     }
 
     // TODO: will be diff for each transaction... needs updating
@@ -261,7 +271,9 @@ export default function SafeInfo(props) {
                     style={{ paddingBottom: 15 }}
                 >
                     <span class='safe-name'>{safeName}</span>
+
                     <Balance balance={balance} />
+                    <SafeAddress address={safeAddress} />
                     <PendingTxTable
                         contract={props.contract}
                         safeAddress={safeAddress}

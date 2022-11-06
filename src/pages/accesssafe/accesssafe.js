@@ -57,7 +57,7 @@ export default function AccessSafe(props) {
                     <ul>{safeButtons}</ul>
                 </div>
 
-                <div className='add-safe-forms'>
+                {/* <div className='add-safe-forms'>
                     <div>
                         <FloatingLabel label='Safe Address' className='mb-3'>
                             <Form.Control placeholder='Safe Address' />
@@ -69,7 +69,7 @@ export default function AccessSafe(props) {
 
                         <Button>Add</Button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

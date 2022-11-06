@@ -10,7 +10,7 @@ contract MultiSigWallet {
         uint256 minVotes;
         uint256 amount;
         uint256 expiryTime;
-        address destination;
+        address payable destination;
         address transaction;
         bool isProcessed;
     }
@@ -96,7 +96,7 @@ contract MultiSigWallet {
 
     function addTransaction(
         address origin,
-        address _destination,
+        address payable _destination,
         uint256 _amount,
         uint256 _duration,
         uint256 _minVotes
@@ -126,11 +126,7 @@ contract MultiSigWallet {
             transactions[_id].forVotes >= transactions[_id].minVotes,
             "Number of votes has not been reached."
         );
-        (bool sucessfulTransaction, ) = transactions[_id].destination.call{
-            value: transactions[_id].amount
-        }("");
-
-        require(sucessfulTransaction, "Transaction was unsuccessful"); // Not sure if necessary
+        transactions[_id].destination.transfer(transactions[_id].amount);
 
         transactions[_id].isProcessed = true;
     }
