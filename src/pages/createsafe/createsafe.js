@@ -13,6 +13,7 @@ export default class CreateSafe extends React.Component {
         this.state = {addresses: [], temp: ''};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.submitSafe = this.submitSafe.bind(this);
     }
     
     handleChange(e) {
@@ -31,6 +32,13 @@ export default class CreateSafe extends React.Component {
         e.preventDefault();
     }
 
+    submitSafe(e) {
+        e.preventDefault();
+        console.log(this.state.temp);   // Is this the name?
+        console.log(this.state.addresses);
+        this.props.contract.methods.createNewSafe(this.state.temp, this.state.addresses).call();
+    }
+
     render() {
 
         return (
@@ -40,7 +48,7 @@ export default class CreateSafe extends React.Component {
                 <div className='content'>
     
                     <h5 className='title fs-3 fw-normal'>Connect your personal safes</h5>
-                    <Form>
+                    <Form onSubmit={this.submitSafe}>
     
                         <FloatingLabel label='Safe Name' className='mb-3'>
                             <Form.Control

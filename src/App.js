@@ -90,7 +90,7 @@ export default function App() {
                     <Route path='/vault-project/' element={<Home />} />
                     <Route
                         path='/vault-project/createsafe'
-                        element={<CreateSafe />}
+                        element={<CreateSafe contract={contract} />}
                     />
                     <Route
                         path='/vault-project/accesssafe'
