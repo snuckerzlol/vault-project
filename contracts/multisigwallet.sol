@@ -10,7 +10,7 @@ contract MultiSigWallet {
         uint256 minVotes;
         uint256 amount;
         uint256 expiryTime;
-        address destination;
+        address payable destination;
         address transaction;
         bool isProcessed;
     }
