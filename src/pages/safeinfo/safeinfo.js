@@ -1,6 +1,7 @@
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import './safeinfo.css';
+import { useLocation } from 'react-router-dom';
 import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import Web3 from 'web3';
@@ -130,14 +131,14 @@ function PendingTxTable(props) {
 }
 
 function AddNewTx(props) {
-    const [address, setAddress] = useState(null);
-    const [amount, setAmount] = useState(null);
-    const [duration, setDuration] = useState(null);
+    const [address, setAddress] = useState('');
+    const [amount, setAmount] = useState('');
+    const [duration, setDuration] = useState('');
 
     async function addTransaction() {
         // TODO: add a field for min votes and use it here
-        const minVotes = 3;
         const wei = Math.round(amount * Math.pow(10, 18));
+        const minVotes = 2;
         props.contract.methods
             .addTransaction(props.safeAddress, address, wei, duration, minVotes)
             .send({ from: props.metamaskAddress });
@@ -192,7 +193,9 @@ export default function SafeInfo(props) {
     const [isOwner, setIsOwner] = useState(false);
     const [transactions, setTransactions] = useState([]);
 
-    const safeContract = new web3.eth.Contract(SAFE_ABI, props.safeAddress);
+    const location = useLocation();
+    const { address: safeAddress } = location.state;
+    const safeContract = new web3.eth.Contract(SAFE_ABI, safeAddress);
 
     async function getSafeName() {
         const safeName = await safeContract.methods.safeName().call();
@@ -200,34 +203,35 @@ export default function SafeInfo(props) {
     }
 
     async function getBalance() {
-        const balance = await props.web3.eth.getBalance(props.safeAddress);
+        const balance = await props.web3.eth.getBalance(safeAddress);
         setBalance(balance);
     }
 
-    // will be diff for each transaction... needs updating
+    // TODO: will be diff for each transaction... needs updating
     async function getMinVotes() {
         // const minVotes = await props.contract.methods.minVotes().call();
-        const minVotes = 1;
-        setMinVotes(minVotes);
+        setMinVotes(2);
     }
 
     async function getTransactionCount() {
         const transactionCount = await safeContract.methods
             .transactionCount()
             .call();
-        setTransactionCount(transactionCount);
+        return transactionCount;
     }
 
     async function getTransactions() {
+        const transactionCount = await getTransactionCount();
+        console.log(`getting ${transactionCount} transactions...`);
+        setTransactionCount(transactionCount);
+        const newTransactions = [];
         for (var i = 0; i < transactionCount; i++) {
-            const addTransaction = await safeContract.methods
+            const newTransaction = await safeContract.methods
                 .transactions(i)
                 .call();
-            setTransactions((transactions) => [
-                ...transactions,
-                addTransaction,
-            ]);
+            newTransactions.push(newTransaction);
         }
+        setTransactions(newTransactions);
     }
 
     async function checkIfOwner(address) {
@@ -245,9 +249,9 @@ export default function SafeInfo(props) {
         getSafeName();
         getBalance();
         getMinVotes();
-        getTransactionCount();
         getTransactions();
         checkIfOwner(props.metamaskAddress);
+        console.log(`address=${safeAddress}`);
     }, [props.metamaskAddress]);
 
     return (
@@ -258,14 +262,14 @@ export default function SafeInfo(props) {
                     <Balance balance={balance} />
                     <PendingTxTable
                         contract={props.contract}
-                        safeAddress={props.safeAddress}
+                        safeAddress={safeAddress}
                         transactions={transactions}
                         minVotes={minVotes}
                     />
                     <AddNewTx
                         contract={props.contract}
                         metamaskAddress={props.metamaskAddress}
-                        safeAddress={props.safeAddress}
+                        safeAddress={safeAddress}
                     />
                 </div>
             ) : (

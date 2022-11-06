@@ -13,6 +13,7 @@ function SafeUnit(props) {
                 <Link
                     to='/vault-project/safeinfo'
                     style={{ textDecoration: 'none' }}
+                    state={{ name: props.name, address: props.address }}
                 >
                     <div>{props.name}</div>
                 </Link>
@@ -25,32 +26,35 @@ export default function AccessSafe(props) {
     const [safes, setSafes] = useState({});
     useEffect(() => {
         getSafeInfo();
-    });
+        setTimeout(console.log(`safes=${JSON.stringify(safes)}`), 200);
+    }, []);
 
     const getSafeInfo = async () => {
         const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
         const addresses = await props.contract.methods.getSafes().call();
-        console.log(`addresses=${addresses}`);
         await Promise.all(
             addresses.map(async (address) => {
                 const safeContract = new web3.eth.Contract(SAFE_ABI, address);
                 const safeName = await safeContract.methods.safeName().call();
                 setSafes((prevState) => {
                     let newSafes = { ...prevState };
-                    newSafes.address = safeName;
+                    newSafes[address] = safeName;
                     return newSafes;
                 });
             })
         );
-        console.log(`info=${safes}`);
     };
+
+    const safeButtons = Object.entries(safes).map(([address, name]) => {
+        return <SafeUnit key={address} name={name} address={address} />;
+    });
 
     return (
         <div>
             <div className='access-safe mt-3'>
                 <h1 className='fw-normal fs-3 mb-3'> Access Safe</h1>
                 <div className='safeunits'>
-                    <SafeUnit name={'Test Safe 1'} />
+                    <ul>{safeButtons}</ul>
                 </div>
 
                 <div className='add-safe-forms'>

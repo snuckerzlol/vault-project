@@ -102,7 +102,6 @@ export default function App() {
                             <SafeInfo
                                 web3={web3}
                                 contract={contract}
-                                safeAddress={TEST_SAFE_ADDRESS}
                                 metamaskAddress={metamaskAddress}
                             />
                         }
