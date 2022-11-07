@@ -146,6 +146,7 @@ function PendingTxTable(props) {
                             TxAmount={row.amount / Math.pow(10, 18)}
                             forVotes={row.forVotes}
                             minVotes={row.minVotes}
+                            isProcessed={row.isProcessed}
                             contract={props.contract}
                             safeAddress={props.safeAddress}
                         />
@@ -167,7 +168,7 @@ function AddNewTx(props) {
         const wei = Math.round(amount * Math.pow(10, 18));
         props.contract.methods
             .addTransaction(props.safeAddress, address, wei, duration, minVotes)
-            .send({ from: props.metamaskAddress });
+            .send({ from: props.contract.defaultAccount });
     }
 
     return (
@@ -231,6 +232,31 @@ export default function SafeInfo(props) {
     const { address: safeAddress } = location.state;
     const safeContract = new web3.eth.Contract(SAFE_ABI, safeAddress);
 
+    // Event listeners
+    function addEventListeners() {
+        safeContract.events.TransactionAdded({}, function (error, result) {
+            if (!error) {
+                console.log(
+                    `New transaction added with id=${result.returnValues.id}.`
+                );
+                getTransactions();
+            }
+        });
+
+        safeContract.events.TransactionVoted({}, function (error, result) {
+            if (!error) {
+                console.log(
+                    `Transaction with id=${result.returnValues.id} was voted on.`
+                );
+                updateTransaction(result.returnValues.id);
+            }
+        });
+        safeContract.events.TransactionExecuted({}, function (error, result) {
+            console.log(`Transaction executed. id=${result.returnValues.id}.`);
+            updateTransaction(result.returnValues.id);
+        });
+    }
+
     async function getSafeName() {
         const safeName = await safeContract.methods.safeName().call();
         setSafeName(safeName);
@@ -256,9 +282,7 @@ export default function SafeInfo(props) {
     }
 
     async function getOwnerCount() {
-        const numOwners = await safeContract.methods
-            .numOwners()
-            .call();
+        const numOwners = await safeContract.methods.numOwners().call();
         setOwnerCount(numOwners);
         return numOwners;
     }
@@ -277,18 +301,13 @@ export default function SafeInfo(props) {
         setTransactions(newTransactions);
     }
 
-    async function getTransactions() {
-        const transactionCount = await getTransactionCount();
-        console.log(`getting ${transactionCount} transactions...`);
-        setTransactionCount(transactionCount);
-        const newTransactions = [];
-        for (var i = 0; i < transactionCount; i++) {
-            const newTransaction = await safeContract.methods
-                .transactions(i)
-                .call();
-            newTransactions.push(newTransaction);
-        }
-        setTransactions(newTransactions);
+    async function updateTransaction(id) {
+        const newTransaction = await safeContract.methods
+            .transactions(id)
+            .call();
+        setTransactions(
+            transactions.map((tx) => (tx.id === id ? newTransaction : tx))
+        );
     }
 
     async function checkIfOwner(address) {
@@ -303,6 +322,7 @@ export default function SafeInfo(props) {
     }
 
     useEffect(() => {
+        addEventListeners();
         getSafeName();
         getBalance();
         // getMinVotes();
