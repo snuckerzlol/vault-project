@@ -6,6 +6,7 @@ import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import { SAFE_ABI } from '../../contracts/config';
+/* global BigInt */
 
 const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
 
@@ -37,6 +38,7 @@ function TxRow(props) {
                         <Button
                             className='approve-deny'
                             onClick={() => executeTx()}
+                            disabled={props.isProcessed}
                         >
                             Execute
                         </Button>
@@ -143,9 +145,10 @@ function PendingTxTable(props) {
                         <TxRow
                             TxNumber={index}
                             Recepient={row.destination}
-                            TxAmount={row.amount / Math.pow(10, 18)}
+                            TxAmount={row.amount / 10e18}
                             forVotes={row.forVotes}
                             minVotes={row.minVotes}
+                            isProcessed={row.isProcessed}
                             contract={props.contract}
                             safeAddress={props.safeAddress}
                         />
@@ -164,10 +167,10 @@ function AddNewTx(props) {
 
     async function addTransaction() {
         // TODO: add a field for min votes and use it here
-        const wei = Math.round(amount * Math.pow(10, 18));
+        const wei = BigInt(amount * 10e18);
         props.contract.methods
             .addTransaction(props.safeAddress, address, wei, duration, minVotes)
-            .send({ from: props.metamaskAddress });
+            .send({ from: props.contract.defaultAccount });
     }
 
     return (
@@ -231,6 +234,33 @@ export default function SafeInfo(props) {
     const { address: safeAddress } = location.state;
     const safeContract = new web3.eth.Contract(SAFE_ABI, safeAddress);
 
+    // Event listeners
+    function addEventListeners() {
+        safeContract.events.TransactionAdded({}, function (error, result) {
+            if (!error) {
+                console.log(
+                    `New transaction added with id=${result.returnValues.id}.`
+                );
+                getTransactions();
+            }
+        });
+
+        safeContract.events.TransactionVoted({}, function (error, result) {
+            if (!error) {
+                console.log(
+                    `Transaction with id=${result.returnValues.id} was voted on.`
+                );
+                // updateTransaction(result.returnValues.id);
+                getTransactions();
+            }
+        });
+        safeContract.events.TransactionExecuted({}, function (error, result) {
+            console.log(`Transaction executed. id=${result.returnValues.id}.`);
+            // updateTransaction(result.returnValues.id);
+            getTransactions();
+        });
+    }
+
     async function getSafeName() {
         const safeName = await safeContract.methods.safeName().call();
         setSafeName(safeName);
@@ -238,7 +268,7 @@ export default function SafeInfo(props) {
 
     async function getBalance() {
         const balance = await props.web3.eth.getBalance(safeAddress);
-        setBalance(balance / Math.pow(10, 18));
+        setBalance(balance / 10e18);
     }
 
     // TODO: will be diff for each transaction... needs updating
@@ -256,9 +286,7 @@ export default function SafeInfo(props) {
     }
 
     async function getOwnerCount() {
-        const numOwners = await safeContract.methods
-            .numOwners()
-            .call();
+        const numOwners = await safeContract.methods.numOwners().call();
         setOwnerCount(numOwners);
         return numOwners;
     }
@@ -277,19 +305,18 @@ export default function SafeInfo(props) {
         setTransactions(newTransactions);
     }
 
-    async function getTransactions() {
-        const transactionCount = await getTransactionCount();
-        console.log(`getting ${transactionCount} transactions...`);
-        setTransactionCount(transactionCount);
-        const newTransactions = [];
-        for (var i = 0; i < transactionCount; i++) {
-            const newTransaction = await safeContract.methods
-                .transactions(i)
-                .call();
-            newTransactions.push(newTransaction);
-        }
-        setTransactions(newTransactions);
-    }
+    // async function updateTransaction(id) {
+    //     const newTransaction = await safeContract.methods
+    //         .transactions(id)
+    //         .call();
+    //     console.log(`before transactions=${transactions}`);
+    //     setTransactions(
+    //         transactions.map((tx) => {
+    //             return tx.id === id ? newTransaction : tx;
+    //         })
+    //     );
+    //     setTimeout(console.log(`after transactions=${transactions}`), 500);
+    // }
 
     async function checkIfOwner(address) {
         try {
@@ -303,6 +330,7 @@ export default function SafeInfo(props) {
     }
 
     useEffect(() => {
+        addEventListeners();
         getSafeName();
         getBalance();
         // getMinVotes();

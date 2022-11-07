@@ -62,6 +62,12 @@ contract MultiSigWallet {
         // expiryDuration = block.timestamp + _duration;
     }
 
+    event TransactionVoted(uint256 id);
+
+    event TransactionAdded(uint256 id);
+
+    event TransactionExecuted(uint256 id);
+
     function voteTransaction(
         address origin,
         uint256 _id,
@@ -92,6 +98,7 @@ contract MultiSigWallet {
         } // else the vote was the same as before so no change needed
 
         transactions[_id].voteType[origin] = _approve;
+        emit TransactionVoted(_id);
     }
 
     function addTransaction(
@@ -111,6 +118,7 @@ contract MultiSigWallet {
         t.expiryTime = block.timestamp + (_duration * 1 seconds);
         t.destination = _destination;
         t.isProcessed = false;
+        emit TransactionAdded(transactionCount);
         transactionCount += 1;
     }
 
@@ -129,6 +137,7 @@ contract MultiSigWallet {
         transactions[_id].destination.transfer(transactions[_id].amount);
 
         transactions[_id].isProcessed = true;
+        emit TransactionExecuted(_id);
     }
 
     // Allows the contract to receive eth
