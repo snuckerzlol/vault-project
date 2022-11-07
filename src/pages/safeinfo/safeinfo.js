@@ -6,6 +6,7 @@ import { Form, FloatingLabel } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import { SAFE_ABI } from '../../contracts/config';
+/* global BigInt */
 
 const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
 
@@ -37,6 +38,7 @@ function TxRow(props) {
                         <Button
                             className='approve-deny'
                             onClick={() => executeTx()}
+                            disabled={props.isProcessed}
                         >
                             Execute
                         </Button>
@@ -143,7 +145,7 @@ function PendingTxTable(props) {
                         <TxRow
                             TxNumber={index}
                             Recepient={row.destination}
-                            TxAmount={row.amount / Math.pow(10, 18)}
+                            TxAmount={row.amount / 10e18}
                             forVotes={row.forVotes}
                             minVotes={row.minVotes}
                             isProcessed={row.isProcessed}
@@ -165,7 +167,7 @@ function AddNewTx(props) {
 
     async function addTransaction() {
         // TODO: add a field for min votes and use it here
-        const wei = Math.round(amount * Math.pow(10, 18));
+        const wei = BigInt(amount * 10e18);
         props.contract.methods
             .addTransaction(props.safeAddress, address, wei, duration, minVotes)
             .send({ from: props.contract.defaultAccount });
@@ -264,7 +266,7 @@ export default function SafeInfo(props) {
 
     async function getBalance() {
         const balance = await props.web3.eth.getBalance(safeAddress);
-        setBalance(balance / Math.pow(10, 18));
+        setBalance(balance / 10e18);
     }
 
     // TODO: will be diff for each transaction... needs updating
@@ -308,6 +310,7 @@ export default function SafeInfo(props) {
         setTransactions(
             transactions.map((tx) => (tx.id === id ? newTransaction : tx))
         );
+        setTimeout(console.log(`transactions=${transactions}.`, 200));
     }
 
     async function checkIfOwner(address) {
