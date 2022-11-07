@@ -250,12 +250,14 @@ export default function SafeInfo(props) {
                 console.log(
                     `Transaction with id=${result.returnValues.id} was voted on.`
                 );
-                updateTransaction(result.returnValues.id);
+                // updateTransaction(result.returnValues.id);
+                getTransactions();
             }
         });
         safeContract.events.TransactionExecuted({}, function (error, result) {
             console.log(`Transaction executed. id=${result.returnValues.id}.`);
-            updateTransaction(result.returnValues.id);
+            // updateTransaction(result.returnValues.id);
+            getTransactions();
         });
     }
 
@@ -303,15 +305,18 @@ export default function SafeInfo(props) {
         setTransactions(newTransactions);
     }
 
-    async function updateTransaction(id) {
-        const newTransaction = await safeContract.methods
-            .transactions(id)
-            .call();
-        setTransactions(
-            transactions.map((tx) => (tx.id === id ? newTransaction : tx))
-        );
-        setTimeout(console.log(`transactions=${transactions}.`, 200));
-    }
+    // async function updateTransaction(id) {
+    //     const newTransaction = await safeContract.methods
+    //         .transactions(id)
+    //         .call();
+    //     console.log(`before transactions=${transactions}`);
+    //     setTransactions(
+    //         transactions.map((tx) => {
+    //             return tx.id === id ? newTransaction : tx;
+    //         })
+    //     );
+    //     setTimeout(console.log(`after transactions=${transactions}`), 500);
+    // }
 
     async function checkIfOwner(address) {
         try {
